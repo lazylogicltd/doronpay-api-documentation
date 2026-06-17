@@ -1,235 +1,175 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>DoronPay API Documentation</title>
-    <meta name="description" content="DoronPay Unified API documentation" />
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DoronPay API Documentation</title>
+  <meta name="description" content="DoronPay Unified API documentation" />
 
-    <style>
-      :root {
-        color-scheme: dark;
-        --bg: #070b14;
-        --text: #f8fafc;
-        --muted: #94a3b8;
-        --accent: #22c55e;
-        --border: rgba(148, 163, 184, 0.22);
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070b14;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #22c55e;
+      --border: rgba(148, 163, 184, 0.22);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(34, 197, 94, 0.16), transparent 34%),
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.14), transparent 32%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(7, 11, 20, 0.88);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand { display: flex; flex-direction: column; gap: 2px; }
+    .brand strong { font-size: 16px; letter-spacing: -0.02em; }
+    .brand span { color: var(--muted); font-size: 13px; }
+
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+
+    .actions a, .actions button {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: rgba(14, 22, 38, 0.9);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .actions a:hover, .actions button:hover { border-color: rgba(34, 197, 94, 0.65); }
+
+    #error {
+      display: none;
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 18px 20px;
+      border: 1px solid rgba(248, 113, 113, 0.45);
+      border-radius: 18px;
+      background: rgba(127, 29, 29, 0.25);
+      color: #fecaca;
+      line-height: 1.55;
+    }
+
+    #error strong { display: block; margin-bottom: 8px; color: #fff; }
+    #api-reference { min-height: calc(100vh - 70px); }
+
+    @media (max-width: 720px) {
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .actions { justify-content: flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <strong>DoronPay API Documentation</strong>
+      <span>Modern API reference powered by Scalar</span>
+    </div>
+
+    <div class="actions">
+      <a href="./doronpay-unified-api.github-pages.json" target="_blank" rel="noopener">Open JSON</a>
+      <button type="button" onclick="location.reload()">Reload</button>
+    </div>
+  </header>
+
+  <div id="error"></div>
+  <div id="api-reference"></div>
+
+  <script>
+    const SPEC_URL = './doronpay-unified-api.github-pages.json';
+
+    function showError(message) {
+      const el = document.getElementById('error');
+      el.style.display = 'block';
+      el.innerHTML = '<strong>Documentation failed to load.</strong>' + message;
+    }
+
+    async function verifySpec() {
+      const response = await fetch(SPEC_URL, { cache: 'no-store' });
+
+      if (!response.ok) {
+        throw new Error(
+          'Could not load <code>' + SPEC_URL + '</code>. HTTP status: ' + response.status +
+          '. Make sure the JSON file is in the same folder as <code>index.html</code> and the filename matches exactly.'
+        );
       }
 
-      * {
-        box-sizing: border-box;
+      try {
+        await response.clone().json();
+      } catch (error) {
+        throw new Error(
+          'The OpenAPI file was found, but it is not valid JSON. Check for trailing commas or broken syntax.'
+        );
       }
+    }
 
-      body {
-        margin: 0;
-        min-height: 100vh;
-        background:
-          radial-gradient(
-            circle at top left,
-            rgba(34, 197, 94, 0.16),
-            transparent 34%
-          ),
-          radial-gradient(
-            circle at top right,
-            rgba(59, 130, 246, 0.14),
-            transparent 32%
-          ),
-          var(--bg);
-        color: var(--text);
-        font-family:
-          Inter,
-          ui-sans-serif,
-          system-ui,
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          sans-serif;
-      }
+    window.addEventListener('error', function (event) {
+      showError('Browser error: <code>' + event.message + '</code>');
+    });
 
-      .topbar {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        padding: 14px 20px;
-        border-bottom: 1px solid var(--border);
-        background: rgba(7, 11, 20, 0.88);
-        backdrop-filter: blur(14px);
-      }
-
-      .brand {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-      }
-      .brand strong {
-        font-size: 16px;
-        letter-spacing: -0.02em;
-      }
-      .brand span {
-        color: var(--muted);
-        font-size: 13px;
-      }
-
-      .actions {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-      }
-
-      .actions a,
-      .actions button {
-        appearance: none;
-        border: 1px solid var(--border);
-        background: rgba(14, 22, 38, 0.9);
-        color: var(--text);
-        padding: 8px 12px;
-        border-radius: 999px;
-        text-decoration: none;
-        font-size: 13px;
-        cursor: pointer;
-      }
-
-      .actions a:hover,
-      .actions button:hover {
-        border-color: rgba(34, 197, 94, 0.65);
-      }
-
-      #error {
-        display: none;
-        max-width: 900px;
-        margin: 24px auto;
-        padding: 18px 20px;
-        border: 1px solid rgba(248, 113, 113, 0.45);
-        border-radius: 18px;
-        background: rgba(127, 29, 29, 0.25);
-        color: #fecaca;
-        line-height: 1.55;
-      }
-
-      #error strong {
-        display: block;
-        margin-bottom: 8px;
-        color: #fff;
-      }
-      #api-reference {
-        min-height: calc(100vh - 70px);
-      }
-
-      @media (max-width: 720px) {
-        .topbar {
-          align-items: flex-start;
-          flex-direction: column;
-        }
-        .actions {
-          justify-content: flex-start;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <header class="topbar">
-      <div class="brand">
-        <strong>DoronPay API Documentation</strong>
-        <span>Modern API reference powered by Scalar</span>
-      </div>
-
-      <div class="actions">
-        <a
-          href="./doronpay-unified-api.github-pages.json"
-          target="_blank"
-          rel="noopener"
-          >Open JSON</a
-        >
-        <button type="button" onclick="location.reload()">Reload</button>
-      </div>
-    </header>
-
-    <div id="error"></div>
-    <div id="api-reference"></div>
-
-    <script>
-      const SPEC_URL = "./doronpay-unified-api.github-pages.json";
-
-      function showError(message) {
-        const el = document.getElementById("error");
-        el.style.display = "block";
-        el.innerHTML =
-          "<strong>Documentation failed to load.</strong>" + message;
-      }
-
-      async function verifySpec() {
-        const response = await fetch(SPEC_URL, { cache: "no-store" });
-
-        if (!response.ok) {
-          throw new Error(
-            "Could not load <code>" +
-              SPEC_URL +
-              "</code>. HTTP status: " +
-              response.status +
-              ". Make sure the JSON file is in the same folder as <code>index.html</code> and the filename matches exactly.",
+    verifySpec()
+      .then(function () {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference';
+        script.onload = function () {
+          try {
+            Scalar.createApiReference('#api-reference', {
+              url: SPEC_URL,
+              theme: 'purple',
+              layout: 'modern',
+              darkMode: true,
+              hideDownloadButton: false,
+              hideTestRequestButton: false,
+              defaultHttpClient: {
+                targetKey: 'javascript',
+                clientKey: 'fetch'
+              },
+              metaData: {
+                title: 'DoronPay API Documentation',
+                description: 'DoronPay Unified API Reference'
+              }
+            });
+          } catch (error) {
+            showError('Scalar loaded, but rendering failed: <code>' + error.message + '</code>');
+          }
+        };
+        script.onerror = function () {
+          showError(
+            'The Scalar CDN script could not load. Check your internet connection, ad blocker, or CDN access. ' +
+            'The JSON file may still be available using the <strong>Open JSON</strong> button.'
           );
-        }
-
-        try {
-          await response.clone().json();
-        } catch (error) {
-          throw new Error(
-            "The OpenAPI file was found, but it is not valid JSON. Check for trailing commas or broken syntax.",
-          );
-        }
-      }
-
-      window.addEventListener("error", function (event) {
-        showError("Browser error: <code>" + event.message + "</code>");
+        };
+        document.body.appendChild(script);
+      })
+      .catch(function (error) {
+        showError(error.message);
       });
-
-      verifySpec()
-        .then(function () {
-          const script = document.createElement("script");
-          script.src = "https://cdn.jsdelivr.net/npm/@scalar/api-reference";
-          script.onload = function () {
-            try {
-              Scalar.createApiReference("#api-reference", {
-                url: SPEC_URL,
-                theme: "purple",
-                layout: "modern",
-                darkMode: true,
-                hideDownloadButton: false,
-                hideTestRequestButton: false,
-                defaultHttpClient: {
-                  targetKey: "javascript",
-                  clientKey: "fetch",
-                },
-                metaData: {
-                  title: "DoronPay API Documentation",
-                  description: "DoronPay Unified API Reference",
-                },
-              });
-            } catch (error) {
-              showError(
-                "Scalar loaded, but rendering failed: <code>" +
-                  error.message +
-                  "</code>",
-              );
-            }
-          };
-          script.onerror = function () {
-            showError(
-              "The Scalar CDN script could not load. Check your internet connection, ad blocker, or CDN access. " +
-                "The JSON file may still be available using the <strong>Open JSON</strong> button.",
-            );
-          };
-          document.body.appendChild(script);
-        })
-        .catch(function (error) {
-          showError(error.message);
-        });
-    </script>
-  </body>
+  </script>
+</body>
 </html>
