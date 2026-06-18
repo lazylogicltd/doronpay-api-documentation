@@ -6,7 +6,7 @@
     "description": "Swagger-ready unified API specification combining:\n- Customer Custody APIs\n- Spot Trading APIs\n- Cached Crypto Rates APIs\n- V2 Credit / Debit / Transfer transaction APIs\n- Supporting checkout, status, remittance, wallet, and merchant routes\n\nNotes:\n- Routes tagged as internal are typically intended for platform workflows, workers, or admin use.\n- Public routes are suitable for merchant-facing integrations.\n- Callback/webhook payloads are documented in the callbacks section and reusable schemas.\n- Most protected routes use the existing jwt-api strategy. Some public or utility routes are intentionally unauthenticated.\n",
     "contact": {
       "name": "API Support",
-      "email": "support@example.com"
+      "email": "info@lazylogiclimited.com"
     },
     "license": {
       "name": "Proprietary"
@@ -136,9 +136,7 @@
   "paths": {
     "/admin/crypto-remittances": {
       "get": {
-        "tags": [
-          "Crypto Remittance Admin"
-        ],
+        "tags": ["Crypto Remittance Admin"],
         "summary": "Admin list crypto remittances",
         "operationId": "listCryptoRemittancesAdmin",
         "security": [
@@ -173,9 +171,7 @@
     },
     "/admin/crypto-remittances/by-collection-transaction/{transactionRef}": {
       "get": {
-        "tags": [
-          "Crypto Remittance Admin"
-        ],
+        "tags": ["Crypto Remittance Admin"],
         "summary": "Admin get crypto remittance by collection transaction reference",
         "description": "Looks up by collection transaction reference, externalTransactionId, or ObjectId.",
         "operationId": "getCryptoRemittanceByCollectionTransactionAdmin",
@@ -211,9 +207,7 @@
     },
     "/admin/crypto-remittances/by-external-reference/{externalReference}": {
       "get": {
-        "tags": [
-          "Crypto Remittance Admin"
-        ],
+        "tags": ["Crypto Remittance Admin"],
         "summary": "Admin get crypto remittance by external reference",
         "operationId": "getCryptoRemittanceByExternalReferenceAdmin",
         "security": [
@@ -248,9 +242,7 @@
     },
     "/admin/crypto-remittances/by-payout-transaction/{transactionRef}": {
       "get": {
-        "tags": [
-          "Crypto Remittance Admin"
-        ],
+        "tags": ["Crypto Remittance Admin"],
         "summary": "Admin get crypto remittance by payout transaction reference",
         "description": "Looks up by payout transaction reference, externalTransactionId, or ObjectId.",
         "operationId": "getCryptoRemittanceByPayoutTransactionAdmin",
@@ -286,9 +278,7 @@
     },
     "/admin/crypto-remittances/summary": {
       "get": {
-        "tags": [
-          "Crypto Remittance Admin"
-        ],
+        "tags": ["Crypto Remittance Admin"],
         "summary": "Admin crypto remittance summary",
         "operationId": "getCryptoRemittanceSummaryAdmin",
         "security": [
@@ -323,9 +313,7 @@
     },
     "/admin/crypto-remittances/{remittanceId}": {
       "get": {
-        "tags": [
-          "Crypto Remittance Admin"
-        ],
+        "tags": ["Crypto Remittance Admin"],
         "summary": "Admin get crypto remittance by ID",
         "operationId": "getCryptoRemittanceAdmin",
         "security": [
@@ -360,9 +348,7 @@
     },
     "/banks/get": {
       "get": {
-        "tags": [
-          "Merchant Apps"
-        ],
+        "tags": ["Merchant Apps"],
         "summary": "Fetch supported bank list",
         "operationId": "getSupportedBanks",
         "security": [],
@@ -382,9 +368,7 @@
     },
     "/checkout": {
       "post": {
-        "tags": [
-          "Checkout & Enquiry"
-        ],
+        "tags": ["Checkout & Enquiry"],
         "summary": "Generate checkout or payment link",
         "operationId": "createCheckout",
         "security": [
@@ -418,9 +402,7 @@
     },
     "/checkout/status/{id}": {
       "get": {
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "summary": "Public checkout transaction status",
         "operationId": "getCheckoutStatus",
         "security": [],
@@ -445,9 +427,7 @@
     },
     "/collections/virtual-account": {
       "post": {
-        "tags": [
-          "Liquidity & Remittance"
-        ],
+        "tags": ["Liquidity & Remittance"],
         "summary": "Create MapleRad virtual account",
         "operationId": "createVirtualAccount",
         "security": [
@@ -481,9 +461,7 @@
     },
     "/crypto/remittance": {
       "post": {
-        "tags": [
-          "Crypto Remittance"
-        ],
+        "tags": ["Crypto Remittance"],
         "summary": "Create stablecoin-to-fiat remittance",
         "operationId": "createCryptoRemittance",
         "security": [
@@ -521,9 +499,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Crypto Remittance"
-        ],
+        "tags": ["Crypto Remittance"],
         "summary": "Get crypto remittance by external reference",
         "operationId": "getCryptoRemittanceByExternalReference",
         "security": [
@@ -558,9 +534,7 @@
     },
     "/crypto/remittance/quote": {
       "post": {
-        "tags": [
-          "Crypto Remittance Quotes"
-        ],
+        "tags": ["Crypto Remittance Quotes"],
         "summary": "Create crypto remittance quote",
         "description": "Create a crypto remittance quote without creating a remittance intent.",
         "operationId": "createCryptoRemittanceQuote",
@@ -601,9 +575,7 @@
     },
     "/crypto/remittance/quote/{quoteId}": {
       "get": {
-        "tags": [
-          "Crypto Remittance Quotes"
-        ],
+        "tags": ["Crypto Remittance Quotes"],
         "summary": "Get crypto remittance quote by ID",
         "operationId": "getCryptoRemittanceQuoteById",
         "security": [
@@ -638,9 +610,7 @@
     },
     "/crypto/remittance/quote/{quoteId}/cancel": {
       "post": {
-        "tags": [
-          "Crypto Remittance Quotes"
-        ],
+        "tags": ["Crypto Remittance Quotes"],
         "summary": "Cancel crypto remittance quote",
         "operationId": "cancelCryptoRemittanceQuote",
         "security": [
@@ -675,9 +645,7 @@
     },
     "/crypto/remittance/quote/{quoteId}/execute": {
       "post": {
-        "tags": [
-          "Crypto Remittance Quotes"
-        ],
+        "tags": ["Crypto Remittance Quotes"],
         "summary": "Execute crypto remittance quote",
         "description": "Execute a crypto remittance quote and create the remittance intent.",
         "operationId": "executeCryptoRemittanceQuote",
@@ -723,10 +691,7 @@
     },
     "/crypto/remittance/quotes": {
       "get": {
-        "tags": [
-          "Crypto Remittance Quotes",
-          "Crypto Remittance Admin"
-        ],
+        "tags": ["Crypto Remittance Quotes", "Crypto Remittance Admin"],
         "summary": "List crypto remittance quotes",
         "operationId": "listCryptoRemittanceQuotes",
         "security": [
@@ -835,10 +800,7 @@
     },
     "/crypto/remittance/reconcile-pending": {
       "post": {
-        "tags": [
-          "Crypto Remittance",
-          "Internal"
-        ],
+        "tags": ["Crypto Remittance", "Internal"],
         "summary": "Manually reconcile pending crypto remittances",
         "operationId": "reconcilePendingCryptoRemittances",
         "security": [
@@ -873,10 +835,7 @@
     },
     "/crypto/remittance/webhooks/send-pending": {
       "post": {
-        "tags": [
-          "Crypto Remittance",
-          "Internal"
-        ],
+        "tags": ["Crypto Remittance", "Internal"],
         "summary": "Send pending crypto remittance webhooks",
         "operationId": "sendPendingCryptoRemittanceWebhooks",
         "security": [
@@ -911,9 +870,7 @@
     },
     "/crypto/remittance/{remittanceId}": {
       "get": {
-        "tags": [
-          "Crypto Remittance"
-        ],
+        "tags": ["Crypto Remittance"],
         "summary": "Get crypto remittance by ID",
         "operationId": "getCryptoRemittanceById",
         "security": [
@@ -948,10 +905,7 @@
     },
     "/crypto/remittance/{remittanceId}/reconcile": {
       "post": {
-        "tags": [
-          "Crypto Remittance",
-          "Internal"
-        ],
+        "tags": ["Crypto Remittance", "Internal"],
         "summary": "Manually reconcile one crypto remittance",
         "operationId": "reconcileCryptoRemittance",
         "security": [
@@ -986,9 +940,7 @@
     },
     "/crypto/remittance/{remittanceId}/webhook/resend": {
       "post": {
-        "tags": [
-          "Crypto Remittance"
-        ],
+        "tags": ["Crypto Remittance"],
         "summary": "Resend webhook for one crypto remittance",
         "operationId": "resendCryptoRemittanceWebhook",
         "security": [
@@ -1023,9 +975,7 @@
     },
     "/custody/asset-wallets": {
       "post": {
-        "tags": [
-          "Custody"
-        ],
+        "tags": ["Custody"],
         "summary": "Create or get custody asset wallet",
         "operationId": "createOrGetCustodyAssetWallet",
         "security": [
@@ -1065,9 +1015,7 @@
     },
     "/custody/asset-wallets/{assetWalletRef}": {
       "get": {
-        "tags": [
-          "Custody"
-        ],
+        "tags": ["Custody"],
         "summary": "Get asset wallet by reference",
         "operationId": "getAssetWalletByRef",
         "security": [
@@ -1105,9 +1053,7 @@
     },
     "/custody/deposit-address": {
       "post": {
-        "tags": [
-          "Custody Deposits"
-        ],
+        "tags": ["Custody Deposits"],
         "summary": "Get or create deposit address",
         "operationId": "getOrCreateDepositAddress",
         "security": [
@@ -1147,9 +1093,7 @@
     },
     "/custody/deposit-address/rotate": {
       "post": {
-        "tags": [
-          "Custody Deposits"
-        ],
+        "tags": ["Custody Deposits"],
         "summary": "Rotate deposit address",
         "operationId": "rotateDepositAddress",
         "security": [
@@ -1189,9 +1133,7 @@
     },
     "/custody/deposits": {
       "post": {
-        "tags": [
-          "Custody Deposits"
-        ],
+        "tags": ["Custody Deposits"],
         "summary": "Initiate customer custody deposit",
         "description": "Initiate fiat or crypto deposit into a customer custody wallet.",
         "operationId": "initiateCustomerCustodyDeposit",
@@ -1305,10 +1247,7 @@
     },
     "/custody/deposits/credit": {
       "post": {
-        "tags": [
-          "Custody Deposits",
-          "Internal"
-        ],
+        "tags": ["Custody Deposits", "Internal"],
         "summary": "Credit custody deposit",
         "description": "Internal/system endpoint for crediting confirmed deposits.",
         "operationId": "creditCustodyDeposit",
@@ -1349,9 +1288,7 @@
     },
     "/custody/trading/execute": {
       "post": {
-        "tags": [
-          "Trading"
-        ],
+        "tags": ["Trading"],
         "summary": "Execute trade quote",
         "operationId": "executeTradeQuote",
         "security": [
@@ -1385,9 +1322,7 @@
     },
     "/custody/trading/executions": {
       "get": {
-        "tags": [
-          "Trading"
-        ],
+        "tags": ["Trading"],
         "summary": "List trade executions",
         "operationId": "listTradeExecutions",
         "security": [
@@ -1439,9 +1374,7 @@
     },
     "/custody/trading/pairs": {
       "get": {
-        "tags": [
-          "Trading"
-        ],
+        "tags": ["Trading"],
         "summary": "List trading pairs",
         "operationId": "listTradingPairs",
         "security": [
@@ -1469,10 +1402,7 @@
             "name": "status",
             "schema": {
               "type": "string",
-              "enum": [
-                "ACTIVE",
-                "DISABLED"
-              ]
+              "enum": ["ACTIVE", "DISABLED"]
             }
           },
           {
@@ -1501,9 +1431,7 @@
     },
     "/custody/trading/quote": {
       "post": {
-        "tags": [
-          "Trading"
-        ],
+        "tags": ["Trading"],
         "summary": "Create trade quote",
         "operationId": "createTradeQuote",
         "security": [
@@ -1537,9 +1465,7 @@
     },
     "/custody/trading/quotes/{quoteRef}": {
       "get": {
-        "tags": [
-          "Trading"
-        ],
+        "tags": ["Trading"],
         "summary": "Get trade quote by reference",
         "operationId": "getTradeQuoteByRef",
         "security": [
@@ -1571,9 +1497,7 @@
     },
     "/custody/transfers": {
       "post": {
-        "tags": [
-          "Custody Transfers"
-        ],
+        "tags": ["Custody Transfers"],
         "summary": "Transfer custody assets between customers",
         "description": "Transfer custody assets between two customer asset wallets.",
         "operationId": "transferBetweenCustomerCustodyWallets",
@@ -1612,9 +1536,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Custody Transfers"
-        ],
+        "tags": ["Custody Transfers"],
         "summary": "List customer custody transfers",
         "description": "List customer custody transfers.",
         "operationId": "listCustomerCustodyTransfers",
@@ -1732,9 +1654,7 @@
     },
     "/custody/wallets": {
       "post": {
-        "tags": [
-          "Custody"
-        ],
+        "tags": ["Custody"],
         "summary": "Create or get custody wallet",
         "operationId": "createOrGetCustodyWallet",
         "security": [
@@ -1774,9 +1694,7 @@
     },
     "/custody/wallets/{endCustomerId}": {
       "get": {
-        "tags": [
-          "Custody"
-        ],
+        "tags": ["Custody"],
         "summary": "Get wallet summary",
         "operationId": "getCustodyWalletSummary",
         "security": [
@@ -1814,9 +1732,7 @@
     },
     "/custody/withdrawals": {
       "post": {
-        "tags": [
-          "Custody Withdrawals"
-        ],
+        "tags": ["Custody Withdrawals"],
         "summary": "Request withdrawal",
         "description": "Creates a custody withdrawal request.\n\nBehavior:\n- When `autoPayoutEnabled = true`, the withdrawal can be picked automatically by the internal payout orchestration after approval.\n- When `autoPayoutEnabled = false`, the withdrawal remains approved until manually processed.\n",
         "operationId": "requestCustodyWithdrawal",
@@ -1877,9 +1793,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Custody Withdrawals"
-        ],
+        "tags": ["Custody Withdrawals"],
         "summary": "List withdrawals",
         "operationId": "listCustodyWithdrawals",
         "security": [
@@ -1944,10 +1858,7 @@
     },
     "/custody/withdrawals/approve": {
       "post": {
-        "tags": [
-          "Custody Withdrawals",
-          "Internal"
-        ],
+        "tags": ["Custody Withdrawals", "Internal"],
         "summary": "Approve withdrawal",
         "description": "Internal/system endpoint.",
         "operationId": "approveCustodyWithdrawal",
@@ -1988,10 +1899,7 @@
     },
     "/custody/withdrawals/failed": {
       "post": {
-        "tags": [
-          "Custody Withdrawals",
-          "Internal"
-        ],
+        "tags": ["Custody Withdrawals", "Internal"],
         "summary": "Mark withdrawal failed",
         "description": "Internal/system endpoint.",
         "operationId": "markWithdrawalFailed",
@@ -2032,10 +1940,7 @@
     },
     "/custody/withdrawals/processing": {
       "post": {
-        "tags": [
-          "Custody Withdrawals",
-          "Internal"
-        ],
+        "tags": ["Custody Withdrawals", "Internal"],
         "summary": "Mark withdrawal processing",
         "description": "Internal/system endpoint.",
         "operationId": "markWithdrawalProcessing",
@@ -2076,10 +1981,7 @@
     },
     "/custody/withdrawals/sent": {
       "post": {
-        "tags": [
-          "Custody Withdrawals",
-          "Internal"
-        ],
+        "tags": ["Custody Withdrawals", "Internal"],
         "summary": "Mark withdrawal sent",
         "description": "Internal/system endpoint.",
         "operationId": "markWithdrawalSent",
@@ -2120,9 +2022,7 @@
     },
     "/date/filter": {
       "get": {
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "summary": "Filter transactions by date and status",
         "operationId": "filterTransactionsByDate",
         "security": [
@@ -2181,9 +2081,7 @@
     },
     "/deposit-intents": {
       "post": {
-        "tags": [
-          "Deposit Intents"
-        ],
+        "tags": ["Deposit Intents"],
         "summary": "Create or reuse deposit intent",
         "description": "Create or return a long-lived deposit intent with a permanent address.",
         "operationId": "createOrReuseDepositIntent",
@@ -2224,10 +2122,7 @@
     },
     "/deposit-intents/internal/external-address": {
       "post": {
-        "tags": [
-          "Deposit Intents",
-          "Internal"
-        ],
+        "tags": ["Deposit Intents", "Internal"],
         "summary": "Create or reuse external-address deposit monitor",
         "description": "Create or reuse one deposit monitor intent for an externally-owned address.",
         "operationId": "createOrReuseExternalAddressDepositIntent",
@@ -2268,9 +2163,7 @@
     },
     "/deposit-intents/{intentCode}": {
       "get": {
-        "tags": [
-          "Deposit Intents"
-        ],
+        "tags": ["Deposit Intents"],
         "summary": "Get deposit intent by intentCode",
         "operationId": "getDepositIntentByCode",
         "security": [
@@ -2315,9 +2208,7 @@
     },
     "/deposit-intents/{intentCode}/events": {
       "get": {
-        "tags": [
-          "Deposit Intents"
-        ],
+        "tags": ["Deposit Intents"],
         "summary": "Fetch deposit events for a deposit intent",
         "operationId": "getDepositEventsByIntent",
         "security": [
@@ -2376,9 +2267,7 @@
     },
     "/deposit-intents/{intentCode}/retire": {
       "post": {
-        "tags": [
-          "Deposit Intents"
-        ],
+        "tags": ["Deposit Intents"],
         "summary": "Retire deposit intent",
         "description": "Retire a long-lived deposit intent and its linked address.",
         "operationId": "retireDepositIntent",
@@ -2424,9 +2313,7 @@
     },
     "/enquiry": {
       "post": {
-        "tags": [
-          "Checkout & Enquiry"
-        ],
+        "tags": ["Checkout & Enquiry"],
         "summary": "Perform mobile money or bank enquiry",
         "operationId": "performEnquiry",
         "security": [
@@ -2460,9 +2347,7 @@
     },
     "/generatekey": {
       "post": {
-        "tags": [
-          "Merchant Apps"
-        ],
+        "tags": ["Merchant Apps"],
         "summary": "Generate API key for merchant app",
         "operationId": "generateMerchantAppKey",
         "security": [
@@ -2496,9 +2381,7 @@
     },
     "/get": {
       "get": {
-        "tags": [
-          "Merchant Apps"
-        ],
+        "tags": ["Merchant Apps"],
         "summary": "List applications or merchant apps",
         "operationId": "listMerchantApps",
         "security": [
@@ -2522,9 +2405,7 @@
     },
     "/get/{id}": {
       "get": {
-        "tags": [
-          "Merchant Apps"
-        ],
+        "tags": ["Merchant Apps"],
         "summary": "Fetch merchant app by id",
         "operationId": "getMerchantAppById",
         "security": [
@@ -2553,9 +2434,7 @@
     },
     "/new": {
       "post": {
-        "tags": [
-          "Merchant Apps"
-        ],
+        "tags": ["Merchant Apps"],
         "summary": "Create new app or user mapping",
         "operationId": "createMerchantApp",
         "security": [
@@ -2589,9 +2468,7 @@
     },
     "/payment-data/decrypt": {
       "post": {
-        "tags": [
-          "Wallet Utilities"
-        ],
+        "tags": ["Wallet Utilities"],
         "summary": "Decrypt encrypted payment data",
         "operationId": "decryptPaymentData",
         "security": [
@@ -2625,9 +2502,7 @@
     },
     "/payout-approval-rules/create": {
       "post": {
-        "tags": [
-          "Payout Approval Rules"
-        ],
+        "tags": ["Payout Approval Rules"],
         "summary": "Create payout approval rule",
         "operationId": "createPayoutApprovalRule",
         "security": [
@@ -2667,9 +2542,7 @@
     },
     "/payout-approval-rules/list": {
       "get": {
-        "tags": [
-          "Payout Approval Rules"
-        ],
+        "tags": ["Payout Approval Rules"],
         "summary": "List payout approval rules",
         "operationId": "listPayoutApprovalRules",
         "security": [
@@ -2704,9 +2577,7 @@
     },
     "/payout-approval-rules/{ruleId}": {
       "get": {
-        "tags": [
-          "Payout Approval Rules"
-        ],
+        "tags": ["Payout Approval Rules"],
         "summary": "Get payout approval rule",
         "operationId": "getPayoutApprovalRule",
         "security": [
@@ -2739,9 +2610,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "Payout Approval Rules"
-        ],
+        "tags": ["Payout Approval Rules"],
         "summary": "Update payout approval rule",
         "operationId": "updatePayoutApprovalRule",
         "security": [
@@ -2786,9 +2655,7 @@
     },
     "/payout-approval-rules/{ruleId}/disable": {
       "post": {
-        "tags": [
-          "Payout Approval Rules"
-        ],
+        "tags": ["Payout Approval Rules"],
         "summary": "Disable payout approval rule",
         "operationId": "disablePayoutApprovalRule",
         "security": [
@@ -2823,9 +2690,7 @@
     },
     "/payout-approval-rules/{ruleId}/enable": {
       "post": {
-        "tags": [
-          "Payout Approval Rules"
-        ],
+        "tags": ["Payout Approval Rules"],
         "summary": "Enable payout approval rule",
         "operationId": "enablePayoutApprovalRule",
         "security": [
@@ -2860,10 +2725,7 @@
     },
     "/production/approvals/{approvalId}/approve": {
       "post": {
-        "tags": [
-          "Stablecoin Production",
-          "Stablecoin Approval"
-        ],
+        "tags": ["Stablecoin Production", "Stablecoin Approval"],
         "summary": "Approve stablecoin approval request",
         "description": "Checker approves a stablecoin approval request.",
         "operationId": "approveStablecoinApproval",
@@ -2909,10 +2771,7 @@
     },
     "/production/approvals/{approvalId}/execute-mint": {
       "post": {
-        "tags": [
-          "Stablecoin Production",
-          "Stablecoin Mint"
-        ],
+        "tags": ["Stablecoin Production", "Stablecoin Mint"],
         "summary": "Execute approved mint request",
         "description": "Execute fully approved mint request.",
         "operationId": "executeApprovedStablecoinMint",
@@ -2948,10 +2807,7 @@
     },
     "/production/approvals/{approvalId}/execute-redemption": {
       "post": {
-        "tags": [
-          "Stablecoin Production",
-          "Stablecoin Redemption"
-        ],
+        "tags": ["Stablecoin Production", "Stablecoin Redemption"],
         "summary": "Execute approved redemption burn",
         "description": "Execute approved redemption burn.",
         "operationId": "executeApprovedStablecoinRedemptionBurn",
@@ -2997,10 +2853,7 @@
     },
     "/production/approvals/{approvalId}/reject": {
       "post": {
-        "tags": [
-          "Stablecoin Production",
-          "Stablecoin Approval"
-        ],
+        "tags": ["Stablecoin Production", "Stablecoin Approval"],
         "summary": "Reject stablecoin approval request",
         "description": "Checker rejects a stablecoin approval request.",
         "operationId": "rejectStablecoinApproval",
@@ -3046,10 +2899,7 @@
     },
     "/production/mint": {
       "post": {
-        "tags": [
-          "Stablecoin Production",
-          "Stablecoin Mint"
-        ],
+        "tags": ["Stablecoin Production", "Stablecoin Mint"],
         "summary": "Create stablecoin mint request",
         "description": "Create bank-grade mint request and open maker-checker approval.",
         "operationId": "createStablecoinMintRequest",
@@ -3090,10 +2940,7 @@
     },
     "/production/mint/{requestId}/confirm-funds": {
       "post": {
-        "tags": [
-          "Stablecoin Production",
-          "Stablecoin Mint"
-        ],
+        "tags": ["Stablecoin Production", "Stablecoin Mint"],
         "summary": "Confirm mint reserve funds",
         "description": "Confirm GHS reserve funds before mint approval execution.",
         "operationId": "confirmStablecoinMintFunds",
@@ -3139,10 +2986,7 @@
     },
     "/production/redeem": {
       "post": {
-        "tags": [
-          "Stablecoin Production",
-          "Stablecoin Redemption"
-        ],
+        "tags": ["Stablecoin Production", "Stablecoin Redemption"],
         "summary": "Create stablecoin redemption request",
         "description": "Create bank-grade redemption request and open maker-checker approval.",
         "operationId": "createStablecoinRedemptionRequest",
@@ -3183,10 +3027,7 @@
     },
     "/production/redeem/{requestId}/mark-paid": {
       "post": {
-        "tags": [
-          "Stablecoin Production",
-          "Stablecoin Redemption"
-        ],
+        "tags": ["Stablecoin Production", "Stablecoin Redemption"],
         "summary": "Mark stablecoin redemption paid",
         "description": "Mark redemption fiat payout as paid.",
         "operationId": "markStablecoinRedemptionPaid",
@@ -3232,10 +3073,7 @@
     },
     "/production/transfer": {
       "post": {
-        "tags": [
-          "Stablecoin Production",
-          "Stablecoin Transfer"
-        ],
+        "tags": ["Stablecoin Production", "Stablecoin Transfer"],
         "summary": "Execute internal stablecoin transfer",
         "description": "Execute locked internal dGHS transfer.",
         "operationId": "createStablecoinTransfer",
@@ -3276,9 +3114,7 @@
     },
     "/public-key": {
       "get": {
-        "tags": [
-          "Wallet Utilities"
-        ],
+        "tags": ["Wallet Utilities"],
         "summary": "Fetch payment-data encryption public key",
         "operationId": "getPublicKey",
         "security": [],
@@ -3298,9 +3134,7 @@
     },
     "/remittance/institutions": {
       "get": {
-        "tags": [
-          "Liquidity & Remittance"
-        ],
+        "tags": ["Liquidity & Remittance"],
         "summary": "Fetch MapleRad institutions by country",
         "operationId": "getRemittanceInstitutions",
         "security": [
@@ -3333,9 +3167,7 @@
     },
     "/remittance/verify/{id}": {
       "get": {
-        "tags": [
-          "Liquidity & Remittance"
-        ],
+        "tags": ["Liquidity & Remittance"],
         "summary": "Verify remittance transaction by id",
         "operationId": "verifyRemittanceTransaction",
         "security": [
@@ -3364,9 +3196,7 @@
     },
     "/status/{id}": {
       "get": {
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "summary": "Fetch transaction status",
         "operationId": "getTransactionStatus",
         "security": [
@@ -3395,9 +3225,7 @@
     },
     "/system/liquidity-status": {
       "get": {
-        "tags": [
-          "Liquidity & Remittance"
-        ],
+        "tags": ["Liquidity & Remittance"],
         "summary": "Get USDT and BTC liquidity status per chain",
         "operationId": "getLiquidityStatus",
         "security": [
@@ -3421,9 +3249,7 @@
     },
     "/token": {
       "post": {
-        "tags": [
-          "Authentication"
-        ],
+        "tags": ["Authentication"],
         "summary": "Generate API access token",
         "description": "Generate API access token using merchant API key, merchant ID, and optional operation scope.",
         "operationId": "generateApiAccessToken",
@@ -3464,9 +3290,7 @@
     },
     "/trading/rates/crypto": {
       "get": {
-        "tags": [
-          "Trading Rates"
-        ],
+        "tags": ["Trading Rates"],
         "summary": "List cached crypto rates",
         "operationId": "listCachedCryptoRatesPublicPath",
         "security": [
@@ -3480,11 +3304,7 @@
             "name": "status",
             "schema": {
               "type": "string",
-              "enum": [
-                "ACTIVE",
-                "STALE",
-                "FAILED"
-              ]
+              "enum": ["ACTIVE", "STALE", "FAILED"]
             }
           },
           {
@@ -3519,9 +3339,7 @@
     },
     "/trading/rates/crypto/quote": {
       "get": {
-        "tags": [
-          "Trading Rates"
-        ],
+        "tags": ["Trading Rates"],
         "summary": "Get cached crypto rate",
         "operationId": "getCachedCryptoRatePublicPath",
         "security": [
@@ -3587,9 +3405,7 @@
     },
     "/transactions/summary/v2/{id}": {
       "get": {
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "summary": "Fetch V2 transaction summary",
         "operationId": "getV2TransactionSummary",
         "security": [
@@ -3618,9 +3434,7 @@
     },
     "/transactions/summary/{id}": {
       "get": {
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "summary": "Fetch legacy transaction summary",
         "operationId": "getLegacyTransactionSummary",
         "security": [
@@ -3649,9 +3463,7 @@
     },
     "/transactions/{id}": {
       "get": {
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "summary": "Fetch transaction details",
         "operationId": "getTransactionDetails",
         "security": [
@@ -3680,9 +3492,7 @@
     },
     "/update": {
       "post": {
-        "tags": [
-          "Merchant Apps"
-        ],
+        "tags": ["Merchant Apps"],
         "summary": "Update app or hub data",
         "operationId": "updateMerchantApp",
         "security": [
@@ -3714,9 +3524,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Merchant Apps"
-        ],
+        "tags": ["Merchant Apps"],
         "summary": "Update app or hub data",
         "operationId": "updateMerchantAppPut",
         "security": [
@@ -3750,9 +3558,7 @@
     },
     "/v2/credit": {
       "post": {
-        "tags": [
-          "Credit V2"
-        ],
+        "tags": ["Credit V2"],
         "summary": "Create payout transaction",
         "operationId": "createCreditV2",
         "security": [
@@ -3810,9 +3616,7 @@
     },
     "/v2/debit": {
       "post": {
-        "tags": [
-          "Debit V2"
-        ],
+        "tags": ["Debit V2"],
         "summary": "Create collection transaction",
         "operationId": "createDebitV2",
         "security": [
@@ -3870,9 +3674,7 @@
     },
     "/v2/transfer": {
       "post": {
-        "tags": [
-          "Transfer V2"
-        ],
+        "tags": ["Transfer V2"],
         "summary": "Create transfer transaction",
         "operationId": "createTransferV2",
         "security": [
@@ -3930,9 +3732,7 @@
     },
     "/wallet/balance": {
       "post": {
-        "tags": [
-          "Wallet Utilities"
-        ],
+        "tags": ["Wallet Utilities"],
         "summary": "Fetch merchant wallet balance",
         "operationId": "getWalletBalance",
         "security": [
@@ -3966,9 +3766,7 @@
     },
     "/{transferId}/crypto-hashes": {
       "get": {
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "summary": "Fetch transfer-related crypto hashes",
         "operationId": "getTransferCryptoHashes",
         "security": [
@@ -4250,10 +4048,7 @@
       },
       "CreateCustodyWalletRequest": {
         "type": "object",
-        "required": [
-          "merchantId",
-          "endCustomerId"
-        ],
+        "required": ["merchantId", "endCustomerId"],
         "properties": {
           "merchantId": {
             "type": "string"
@@ -4266,10 +4061,7 @@
           },
           "custodyMode": {
             "type": "string",
-            "enum": [
-              "OMNIBUS",
-              "SEGREGATED"
-            ]
+            "enum": ["OMNIBUS", "SEGREGATED"]
           },
           "metadata": {
             "type": "object",
@@ -4279,12 +4071,7 @@
       },
       "CreateAssetWalletRequest": {
         "type": "object",
-        "required": [
-          "merchantId",
-          "endCustomerId",
-          "network",
-          "asset"
-        ],
+        "required": ["merchantId", "endCustomerId", "network", "asset"],
         "properties": {
           "merchantId": {
             "type": "string"
@@ -4294,21 +4081,11 @@
           },
           "network": {
             "type": "string",
-            "enum": [
-              "POLYGON",
-              "BEP20",
-              "TRC20",
-              "SOLANA",
-              "ERC20"
-            ]
+            "enum": ["POLYGON", "BEP20", "TRC20", "SOLANA", "ERC20"]
           },
           "asset": {
             "type": "string",
-            "enum": [
-              "USDT",
-              "USDC",
-              "BTC"
-            ]
+            "enum": ["USDT", "USDC", "BTC"]
           },
           "label": {
             "type": "string"
@@ -4321,12 +4098,7 @@
       },
       "CreateDepositAddressRequest": {
         "type": "object",
-        "required": [
-          "merchantId",
-          "endCustomerId",
-          "network",
-          "asset"
-        ],
+        "required": ["merchantId", "endCustomerId", "network", "asset"],
         "properties": {
           "merchantId": {
             "type": "string"
@@ -4336,21 +4108,11 @@
           },
           "network": {
             "type": "string",
-            "enum": [
-              "POLYGON",
-              "BEP20",
-              "TRC20",
-              "SOLANA",
-              "ERC20"
-            ]
+            "enum": ["POLYGON", "BEP20", "TRC20", "SOLANA", "ERC20"]
           },
           "asset": {
             "type": "string",
-            "enum": [
-              "USDT",
-              "USDC",
-              "BTC"
-            ]
+            "enum": ["USDT", "USDC", "BTC"]
           },
           "tokenContract": {
             "type": "string",
@@ -4376,11 +4138,7 @@
       },
       "CreditDepositRequest": {
         "type": "object",
-        "required": [
-          "assetWalletId",
-          "amount",
-          "idempotencyKey"
-        ],
+        "required": ["assetWalletId", "amount", "idempotencyKey"],
         "properties": {
           "assetWalletId": {
             "type": "string"
@@ -4424,7 +4182,7 @@
           },
           "amount": {
             "type": "number",
-            "minimum": 1e-08
+            "minimum": 1e-8
           },
           "feeAmount": {
             "type": "number",
@@ -4484,10 +4242,7 @@
       },
       "ApproveWithdrawalRequest": {
         "type": "object",
-        "required": [
-          "withdrawalId",
-          "approvedBy"
-        ],
+        "required": ["withdrawalId", "approvedBy"],
         "properties": {
           "withdrawalId": {
             "type": "string"
@@ -4499,9 +4254,7 @@
       },
       "WithdrawalProcessingRequest": {
         "type": "object",
-        "required": [
-          "withdrawalId"
-        ],
+        "required": ["withdrawalId"],
         "properties": {
           "withdrawalId": {
             "type": "string"
@@ -4510,10 +4263,7 @@
       },
       "WithdrawalSentRequest": {
         "type": "object",
-        "required": [
-          "withdrawalId",
-          "txHash"
-        ],
+        "required": ["withdrawalId", "txHash"],
         "properties": {
           "withdrawalId": {
             "type": "string"
@@ -4525,10 +4275,7 @@
       },
       "WithdrawalFailedRequest": {
         "type": "object",
-        "required": [
-          "withdrawalId",
-          "failureReason"
-        ],
+        "required": ["withdrawalId", "failureReason"],
         "properties": {
           "withdrawalId": {
             "type": "string"
@@ -4568,20 +4315,13 @@
           },
           "side": {
             "type": "string",
-            "enum": [
-              "BUY",
-              "SELL",
-              "SWAP"
-            ]
+            "enum": ["BUY", "SELL", "SWAP"]
           }
         }
       },
       "ExecuteTradeQuoteRequest": {
         "type": "object",
-        "required": [
-          "quoteRef",
-          "idempotencyKey"
-        ],
+        "required": ["quoteRef", "idempotencyKey"],
         "properties": {
           "quoteRef": {
             "type": "string"
@@ -4637,10 +4377,7 @@
           },
           "currency": {
             "type": "string",
-            "enum": [
-              "GHS",
-              "USD"
-            ]
+            "enum": ["GHS", "USD"]
           },
           "description": {
             "type": "string"
@@ -4651,11 +4388,7 @@
           },
           "rail": {
             "type": "string",
-            "enum": [
-              "MOMO",
-              "BANK",
-              "CRYPTO"
-            ]
+            "enum": ["MOMO", "BANK", "CRYPTO"]
           },
           "destination": {
             "oneOf": [
@@ -4674,13 +4407,7 @@
       },
       "DebitV2Request": {
         "type": "object",
-        "required": [
-          "amount",
-          "description",
-          "callbackUrl",
-          "rail",
-          "source"
-        ],
+        "required": ["amount", "description", "callbackUrl", "rail", "source"],
         "properties": {
           "externalTransactionId": {
             "type": "string"
@@ -4697,10 +4424,7 @@
           },
           "currency": {
             "type": "string",
-            "enum": [
-              "GHS",
-              "USD"
-            ]
+            "enum": ["GHS", "USD"]
           },
           "description": {
             "type": "string"
@@ -4711,12 +4435,7 @@
           },
           "rail": {
             "type": "string",
-            "enum": [
-              "MOMO",
-              "BANK",
-              "CARD",
-              "CRYPTO"
-            ]
+            "enum": ["MOMO", "BANK", "CARD", "CRYPTO"]
           },
           "source": {
             "oneOf": [
@@ -4773,20 +4492,11 @@
           },
           "rail": {
             "type": "string",
-            "enum": [
-              "MOMO",
-              "BANK",
-              "CARD",
-              "CRYPTO"
-            ]
+            "enum": ["MOMO", "BANK", "CARD", "CRYPTO"]
           },
           "destinationRail": {
             "type": "string",
-            "enum": [
-              "MOMO",
-              "BANK",
-              "CRYPTO"
-            ]
+            "enum": ["MOMO", "BANK", "CRYPTO"]
           },
           "source": {
             "oneOf": [
@@ -4821,18 +4531,11 @@
       },
       "MomoDestination": {
         "type": "object",
-        "required": [
-          "type",
-          "provider",
-          "phoneNumber",
-          "accountName"
-        ],
+        "required": ["type", "provider", "phoneNumber", "accountName"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "MOMO"
-            ]
+            "enum": ["MOMO"]
           },
           "provider": {
             "type": "string"
@@ -4847,17 +4550,11 @@
       },
       "BankDestination": {
         "type": "object",
-        "required": [
-          "type",
-          "accountNumber",
-          "accountName"
-        ],
+        "required": ["type", "accountNumber", "accountName"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "BANK"
-            ]
+            "enum": ["BANK"]
           },
           "bankCode": {
             "type": "string"
@@ -4879,18 +4576,11 @@
       },
       "CryptoDestination": {
         "type": "object",
-        "required": [
-          "type",
-          "network",
-          "asset",
-          "destinationAddress"
-        ],
+        "required": ["type", "network", "asset", "destinationAddress"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "CRYPTO"
-            ]
+            "enum": ["CRYPTO"]
           },
           "network": {
             "type": "string"
@@ -4917,18 +4607,11 @@
       },
       "TransferCryptoDestination": {
         "type": "object",
-        "required": [
-          "type",
-          "network",
-          "asset",
-          "address"
-        ],
+        "required": ["type", "network", "asset", "address"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "CRYPTO"
-            ]
+            "enum": ["CRYPTO"]
           },
           "network": {
             "type": "string"
@@ -4955,18 +4638,11 @@
       },
       "MomoSource": {
         "type": "object",
-        "required": [
-          "type",
-          "provider",
-          "phoneNumber",
-          "accountName"
-        ],
+        "required": ["type", "provider", "phoneNumber", "accountName"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "MOMO"
-            ]
+            "enum": ["MOMO"]
           },
           "provider": {
             "type": "string"
@@ -4981,17 +4657,11 @@
       },
       "BankSource": {
         "type": "object",
-        "required": [
-          "type",
-          "accountNumber",
-          "accountName"
-        ],
+        "required": ["type", "accountNumber", "accountName"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "BANK"
-            ]
+            "enum": ["BANK"]
           },
           "bankCode": {
             "type": "string"
@@ -5013,23 +4683,15 @@
       },
       "CardSource": {
         "type": "object",
-        "required": [
-          "type",
-          "mode"
-        ],
+        "required": ["type", "mode"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "CARD"
-            ]
+            "enum": ["CARD"]
           },
           "mode": {
             "type": "string",
-            "enum": [
-              "TOKEN",
-              "RAW"
-            ]
+            "enum": ["TOKEN", "RAW"]
           },
           "tokenId": {
             "type": "string"
@@ -5050,11 +4712,7 @@
       },
       "RawCard": {
         "type": "object",
-        "required": [
-          "number",
-          "expiry",
-          "cvc"
-        ],
+        "required": ["number", "expiry", "cvc"],
         "properties": {
           "number": {
             "type": "string"
@@ -5072,18 +4730,11 @@
       },
       "CryptoSource": {
         "type": "object",
-        "required": [
-          "type",
-          "network",
-          "asset",
-          "walletAddress"
-        ],
+        "required": ["type", "network", "asset", "walletAddress"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "CRYPTO"
-            ]
+            "enum": ["CRYPTO"]
           },
           "network": {
             "type": "string"
@@ -5215,10 +4866,7 @@
       },
       "WalletBalanceRequest": {
         "type": "object",
-        "required": [
-          "currency",
-          "walletType"
-        ],
+        "required": ["currency", "walletType"],
         "properties": {
           "currency": {
             "type": "string"
@@ -5230,10 +4878,7 @@
       },
       "DecryptPaymentDataRequest": {
         "type": "object",
-        "required": [
-          "keyId",
-          "encryptedPaymentData"
-        ],
+        "required": ["keyId", "encryptedPaymentData"],
         "properties": {
           "keyId": {
             "type": "string"
@@ -5312,10 +4957,7 @@
       },
       "CreateMerchantAppRequest": {
         "type": "object",
-        "required": [
-          "name",
-          "merchantId"
-        ],
+        "required": ["name", "merchantId"],
         "properties": {
           "name": {
             "type": "string"
@@ -5327,10 +4969,7 @@
       },
       "GenerateMerchantKeyRequest": {
         "type": "object",
-        "required": [
-          "merchantId",
-          "appId"
-        ],
+        "required": ["merchantId", "appId"],
         "properties": {
           "merchantId": {
             "type": "string"
@@ -5342,10 +4981,7 @@
       },
       "UpdateMerchantAppRequest": {
         "type": "object",
-        "required": [
-          "id",
-          "data"
-        ],
+        "required": ["id", "data"],
         "properties": {
           "id": {
             "type": "string"
@@ -5358,10 +4994,7 @@
       },
       "CreateVirtualAccountRequest": {
         "type": "object",
-        "required": [
-          "customerId",
-          "currency"
-        ],
+        "required": ["customerId", "currency"],
         "properties": {
           "customerId": {
             "type": "string"
@@ -5416,20 +5049,11 @@
           },
           "sourceNetwork": {
             "type": "string",
-            "enum": [
-              "BEP20",
-              "TRC20",
-              "ERC20",
-              "POLYGON",
-              "SOLANA"
-            ]
+            "enum": ["BEP20", "TRC20", "ERC20", "POLYGON", "SOLANA"]
           },
           "sourceAsset": {
             "type": "string",
-            "enum": [
-              "USDT",
-              "USDC"
-            ]
+            "enum": ["USDT", "USDC"]
           },
           "sourceAmount": {
             "oneOf": [
@@ -5446,10 +5070,7 @@
           },
           "destinationCurrency": {
             "type": "string",
-            "enum": [
-              "GHS",
-              "NGN"
-            ]
+            "enum": ["GHS", "NGN"]
           },
           "destinationAmount": {
             "oneOf": [
@@ -5497,12 +5118,7 @@
           },
           "quoteProvider": {
             "type": "string",
-            "enum": [
-              "BANK_FX_ENGINE",
-              "T24",
-              "FLEXCUBE",
-              "CUSTOM_BANK_API"
-            ],
+            "enum": ["BANK_FX_ENGINE", "T24", "FLEXCUBE", "CUSTOM_BANK_API"],
             "nullable": true
           },
           "recipient": {
@@ -5562,17 +5178,11 @@
       },
       "CryptoRemittanceRecipient": {
         "type": "object",
-        "required": [
-          "type",
-          "accountName"
-        ],
+        "required": ["type", "accountName"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "MOMO",
-              "BANK"
-            ]
+            "enum": ["MOMO", "BANK"]
           },
           "provider": {
             "type": "string",
@@ -5606,10 +5216,7 @@
           },
           "serviceType": {
             "type": "string",
-            "enum": [
-              "GIP",
-              "NIP"
-            ],
+            "enum": ["GIP", "NIP"],
             "nullable": true
           }
         },
@@ -5733,10 +5340,7 @@
           },
           "sortOrder": {
             "type": "string",
-            "enum": [
-              "asc",
-              "desc"
-            ],
+            "enum": ["asc", "desc"],
             "default": "desc"
           }
         }
@@ -5869,9 +5473,7 @@
           },
           {
             "type": "object",
-            "required": [
-              "name"
-            ],
+            "required": ["name"],
             "properties": {
               "createdBy": {
                 "type": "string",
@@ -5888,9 +5490,7 @@
           "network": "TRC20",
           "amountGreaterThanOrEqual": 5000,
           "requiredApprovals": 2,
-          "approverRoles": [
-            "finance_admin"
-          ],
+          "approverRoles": ["finance_admin"],
           "priority": 10
         }
       },
@@ -5952,20 +5552,12 @@
           },
           "sortBy": {
             "type": "string",
-            "enum": [
-              "createdAt",
-              "updatedAt",
-              "priority",
-              "name"
-            ],
+            "enum": ["createdAt", "updatedAt", "priority", "name"],
             "default": "createdAt"
           },
           "sortOrder": {
             "type": "string",
-            "enum": [
-              "asc",
-              "desc"
-            ],
+            "enum": ["asc", "desc"],
             "default": "desc"
           }
         }
@@ -5998,20 +5590,11 @@
           },
           "sourceNetwork": {
             "type": "string",
-            "enum": [
-              "BEP20",
-              "TRC20",
-              "ERC20",
-              "POLYGON",
-              "SOLANA"
-            ]
+            "enum": ["BEP20", "TRC20", "ERC20", "POLYGON", "SOLANA"]
           },
           "sourceAsset": {
             "type": "string",
-            "enum": [
-              "USDT",
-              "USDC"
-            ]
+            "enum": ["USDT", "USDC"]
           },
           "sourceAmount": {
             "oneOf": [
@@ -6028,10 +5611,7 @@
           },
           "destinationCurrency": {
             "type": "string",
-            "enum": [
-              "GHS",
-              "NGN"
-            ]
+            "enum": ["GHS", "NGN"]
           },
           "destinationAmount": {
             "oneOf": [
@@ -6073,12 +5653,7 @@
           },
           "quoteProvider": {
             "type": "string",
-            "enum": [
-              "BANK_FX_ENGINE",
-              "T24",
-              "FLEXCUBE",
-              "CUSTOM_BANK_API"
-            ],
+            "enum": ["BANK_FX_ENGINE", "T24", "FLEXCUBE", "CUSTOM_BANK_API"],
             "nullable": true
           },
           "useExternalBankQuote": {
@@ -6166,49 +5741,23 @@
       },
       "DepositAsset": {
         "type": "string",
-        "enum": [
-          "BTC",
-          "USDT",
-          "USDC"
-        ]
+        "enum": ["BTC", "USDT", "USDC"]
       },
       "DepositNetwork": {
         "type": "string",
-        "enum": [
-          "BTC",
-          "TRC20",
-          "BEP20",
-          "SOLANA",
-          "ERC20",
-          "POLYGON"
-        ]
+        "enum": ["BTC", "TRC20", "BEP20", "SOLANA", "ERC20", "POLYGON"]
       },
       "DepositIntentStatus": {
         "type": "string",
-        "enum": [
-          "ACTIVE",
-          "DISABLED",
-          "RETIRED",
-          "FAILED"
-        ]
+        "enum": ["ACTIVE", "DISABLED", "RETIRED", "FAILED"]
       },
       "DepositEventStatus": {
         "type": "string",
-        "enum": [
-          "SEEN",
-          "CONFIRMED",
-          "WEBHOOK_SENT",
-          "CREDITED"
-        ]
+        "enum": ["SEEN", "CONFIRMED", "WEBHOOK_SENT", "CREDITED"]
       },
       "CreateDepositIntentRequest": {
         "type": "object",
-        "required": [
-          "merchantId",
-          "referenceId",
-          "asset",
-          "network"
-        ],
+        "required": ["merchantId", "referenceId", "asset", "network"],
         "properties": {
           "merchantId": {
             "type": "string",
@@ -6363,10 +5912,7 @@
       },
       "GenerateApiAccessTokenRequest": {
         "type": "object",
-        "required": [
-          "apikey",
-          "merchantId"
-        ],
+        "required": ["apikey", "merchantId"],
         "additionalProperties": false,
         "properties": {
           "apikey": {
@@ -6442,19 +5988,11 @@
       },
       "CustodyDepositRail": {
         "type": "string",
-        "enum": [
-          "MOMO",
-          "BANK",
-          "CARD",
-          "CRYPTO"
-        ]
+        "enum": ["MOMO", "BANK", "CARD", "CRYPTO"]
       },
       "CustodyDepositTarget": {
         "type": "object",
-        "required": [
-          "network",
-          "asset"
-        ],
+        "required": ["network", "asset"],
         "properties": {
           "network": {
             "type": "string",
@@ -6479,17 +6017,11 @@
       },
       "CustodyMomoSource": {
         "type": "object",
-        "required": [
-          "type",
-          "provider",
-          "phoneNumber"
-        ],
+        "required": ["type", "provider", "phoneNumber"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "MOMO"
-            ]
+            "enum": ["MOMO"]
           },
           "provider": {
             "type": "string",
@@ -6507,17 +6039,11 @@
       },
       "CustodyBankSource": {
         "type": "object",
-        "required": [
-          "type",
-          "accountNumber",
-          "issuer"
-        ],
+        "required": ["type", "accountNumber", "issuer"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "BANK"
-            ]
+            "enum": ["BANK"]
           },
           "accountNumber": {
             "type": "string",
@@ -6545,23 +6071,15 @@
       },
       "CustodyCardTokenSource": {
         "type": "object",
-        "required": [
-          "type",
-          "mode",
-          "tokenId"
-        ],
+        "required": ["type", "mode", "tokenId"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "CARD"
-            ]
+            "enum": ["CARD"]
           },
           "mode": {
             "type": "string",
-            "enum": [
-              "TOKEN"
-            ]
+            "enum": ["TOKEN"]
           },
           "tokenId": {
             "type": "string"
@@ -6583,31 +6101,19 @@
       },
       "CustodyCardRawSource": {
         "type": "object",
-        "required": [
-          "type",
-          "mode",
-          "card"
-        ],
+        "required": ["type", "mode", "card"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "CARD"
-            ]
+            "enum": ["CARD"]
           },
           "mode": {
             "type": "string",
-            "enum": [
-              "RAW"
-            ]
+            "enum": ["RAW"]
           },
           "card": {
             "type": "object",
-            "required": [
-              "number",
-              "expiry",
-              "cvc"
-            ],
+            "required": ["number", "expiry", "cvc"],
             "properties": {
               "number": {
                 "type": "string"
@@ -6629,29 +6135,15 @@
       },
       "CustodyCryptoSource": {
         "type": "object",
-        "required": [
-          "type",
-          "network",
-          "asset",
-          "walletAddress"
-        ],
+        "required": ["type", "network", "asset", "walletAddress"],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "CRYPTO"
-            ]
+            "enum": ["CRYPTO"]
           },
           "network": {
             "type": "string",
-            "enum": [
-              "POLYGON",
-              "BEP20",
-              "TRC20",
-              "SOLANA",
-              "ERC20",
-              "BTC"
-            ]
+            "enum": ["POLYGON", "BEP20", "TRC20", "SOLANA", "ERC20", "BTC"]
           },
           "asset": {
             "type": "string",
@@ -6709,7 +6201,7 @@
             "type": "number",
             "minimum": 0,
             "exclusiveMinimum": true,
-            "multipleOf": 1e-08,
+            "multipleOf": 1e-8,
             "description": "Positive amount with up to 8 decimal places."
           },
           "currency": {
@@ -6841,16 +6333,12 @@
       },
       "StablecoinSymbol": {
         "type": "string",
-        "enum": [
-          "DGHS"
-        ],
+        "enum": ["DGHS"],
         "default": "DGHS"
       },
       "StablecoinFiatCurrency": {
         "type": "string",
-        "enum": [
-          "GHS"
-        ],
+        "enum": ["GHS"],
         "default": "GHS"
       },
       "StablecoinMintStatus": {
@@ -6925,13 +6413,7 @@
           },
           "destinationOwnerType": {
             "type": "string",
-            "enum": [
-              "MERCHANT",
-              "CORPORATE",
-              "BANK",
-              "SYSTEM",
-              "CUSTOMER"
-            ],
+            "enum": ["MERCHANT", "CORPORATE", "BANK", "SYSTEM", "CUSTOMER"],
             "description": "DoronPay owner that will receive the stablecoin."
           },
           "destinationChainAddress": {
@@ -6940,9 +6422,7 @@
           },
           "chainNetwork": {
             "type": "string",
-            "enum": [
-              "SOLANA"
-            ],
+            "enum": ["SOLANA"],
             "default": "SOLANA"
           },
           "fundingReference": {
@@ -6978,11 +6458,7 @@
       },
       "ConfirmMintFundsRequest": {
         "type": "object",
-        "required": [
-          "reserveAccountId",
-          "bankReference",
-          "confirmedBy"
-        ],
+        "required": ["reserveAccountId", "bankReference", "confirmedBy"],
         "properties": {
           "reserveAccountId": {
             "type": "string",
@@ -7019,9 +6495,7 @@
       },
       "StablecoinApprovalRejectRequest": {
         "type": "object",
-        "required": [
-          "reason"
-        ],
+        "required": ["reason"],
         "properties": {
           "reason": {
             "type": "string"
@@ -7053,12 +6527,7 @@
           },
           "senderOwnerType": {
             "type": "string",
-            "enum": [
-              "CUSTOMER",
-              "MERCHANT",
-              "BANK",
-              "SYSTEM"
-            ]
+            "enum": ["CUSTOMER", "MERCHANT", "BANK", "SYSTEM"]
           },
           "receiverOwnerId": {
             "type": "string",
@@ -7066,12 +6535,7 @@
           },
           "receiverOwnerType": {
             "type": "string",
-            "enum": [
-              "CUSTOMER",
-              "MERCHANT",
-              "BANK",
-              "SYSTEM"
-            ]
+            "enum": ["CUSTOMER", "MERCHANT", "BANK", "SYSTEM"]
           },
           "narration": {
             "type": "string",
@@ -7141,20 +6605,11 @@
           },
           "sourceOwnerType": {
             "type": "string",
-            "enum": [
-              "CUSTOMER",
-              "MERCHANT",
-              "BANK",
-              "SYSTEM"
-            ]
+            "enum": ["CUSTOMER", "MERCHANT", "BANK", "SYSTEM"]
           },
           "payoutAccountType": {
             "type": "string",
-            "enum": [
-              "BANK",
-              "MOMO",
-              "WALLET"
-            ]
+            "enum": ["BANK", "MOMO", "WALLET"]
           },
           "payoutAccountNumber": {
             "type": "string"
@@ -7191,10 +6646,7 @@
       },
       "ApproveStablecoinRedemptionRequest": {
         "type": "object",
-        "required": [
-          "reserveAccountId",
-          "approvedBy"
-        ],
+        "required": ["reserveAccountId", "approvedBy"],
         "properties": {
           "reserveAccountId": {
             "type": "string",
@@ -7212,9 +6664,7 @@
       },
       "MarkStablecoinRedemptionPaidRequest": {
         "type": "object",
-        "required": [
-          "paidBy"
-        ],
+        "required": ["paidBy"],
         "properties": {
           "payoutTransactionId": {
             "type": "string",
@@ -7233,11 +6683,7 @@
       },
       "CustodyTransferStatus": {
         "type": "string",
-        "enum": [
-          "COMPLETED",
-          "FAILED",
-          "REVERSED"
-        ]
+        "enum": ["COMPLETED", "FAILED", "REVERSED"]
       },
       "CustomerCustodyTransferRequest": {
         "type": "object",
