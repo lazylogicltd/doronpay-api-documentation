@@ -1,86 +1,328 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="sl-theme-dark">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>DoronPay API Documentation</title>
-  <meta name="description" content="DoronPay Unified API documentation" />
+
+  <link rel="stylesheet" href="https://unpkg.com/@stoplight/elements/styles.min.css" />
 
   <style>
     :root {
       color-scheme: dark;
-      --bg: #070b14;
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --accent: #22c55e;
-      --border: rgba(148, 163, 184, 0.22);
+
+      --dp-bg: #000000;
+      --dp-panel: #080808;
+      --dp-panel-2: #101010;
+      --dp-panel-3: #171717;
+      --dp-border: rgba(255, 255, 255, 0.16);
+      --dp-border-strong: rgba(255, 255, 255, 0.24);
+      --dp-text: #ffffff;
+      --dp-text-soft: #f5f5f5;
+      --dp-muted: #d4d4d4;
+      --dp-muted-2: #a3a3a3;
+      --dp-accent: #22c55e;
+      --dp-accent-light: #4ade80;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
+    html,
     body {
       margin: 0;
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at top left, rgba(34, 197, 94, 0.16), transparent 34%),
-        radial-gradient(circle at top right, rgba(59, 130, 246, 0.14), transparent 32%),
-        var(--bg);
-      color: var(--text);
+      min-height: 100%;
+      background: #000000;
+      color: var(--dp-text);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(34, 197, 94, 0.12), transparent 28%),
+        radial-gradient(circle at top right, rgba(37, 99, 235, 0.08), transparent 30%),
+        #000000;
+    }
+
     .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      height: 68px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(7, 11, 20, 0.88);
-      backdrop-filter: blur(14px);
+      padding: 12px 20px;
+      background: rgba(0, 0, 0, 0.94);
+      border-bottom: 1px solid var(--dp-border);
+      color: var(--dp-text);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
     }
 
-    .brand { display: flex; flex-direction: column; gap: 2px; }
-    .brand strong { font-size: 16px; letter-spacing: -0.02em; }
-    .brand span { color: var(--muted); font-size: 13px; }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 240px;
+    }
 
-    .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .logo-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #000000;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      box-shadow: 0 0 30px rgba(34, 197, 94, 0.25);
+    }
 
-    .actions a, .actions button {
-      appearance: none;
-      border: 1px solid var(--border);
-      background: rgba(14, 22, 38, 0.9);
-      color: var(--text);
-      padding: 8px 12px;
-      border-radius: 999px;
-      text-decoration: none;
+    .brand-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .brand-copy strong {
+      font-size: 16px;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+
+    .brand-copy span {
       font-size: 13px;
-      cursor: pointer;
+      color: #d4d4d4;
     }
 
-    .actions a:hover, .actions button:hover { border-color: rgba(34, 197, 94, 0.65); }
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .actions a,
+    .actions button {
+      border: 1px solid var(--dp-border);
+      background: #0c0c0c;
+      color: #ffffff;
+      border-radius: 999px;
+      padding: 8px 13px;
+      font-size: 13px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color 150ms ease, background 150ms ease, transform 150ms ease;
+    }
+
+    .actions a:hover,
+    .actions button:hover {
+      border-color: rgba(34, 197, 94, 0.9);
+      background: #151515;
+      transform: translateY(-1px);
+    }
 
     #error {
       display: none;
-      max-width: 900px;
-      margin: 24px auto;
-      padding: 18px 20px;
+      margin: 20px;
+      padding: 16px 18px;
+      border-radius: 14px;
       border: 1px solid rgba(248, 113, 113, 0.45);
-      border-radius: 18px;
-      background: rgba(127, 29, 29, 0.25);
+      background: rgba(127, 29, 29, 0.3);
       color: #fecaca;
       line-height: 1.55;
     }
 
-    #error strong { display: block; margin-bottom: 8px; color: #fff; }
-    #api-reference { min-height: calc(100vh - 70px); }
+    #error strong {
+      display: block;
+      margin-bottom: 8px;
+      color: #ffffff;
+    }
+
+    .docs-shell {
+      height: calc(100vh - 68px);
+      background: #000000;
+      overflow: hidden;
+    }
+
+    elements-api {
+      display: block;
+      height: 100%;
+      background: #000000;
+      color: #ffffff;
+    }
+
+    /*
+      Strong black theme overrides for Stoplight Elements.
+      This fixes low-contrast text, muted labels, sidebar items,
+      code examples, request panels, schema tables, and tabs.
+    */
+    elements-api,
+    elements-api * {
+      --color-canvas: #000000 !important;
+      --color-canvas-100: #050505 !important;
+      --color-canvas-200: #0a0a0a !important;
+      --color-canvas-300: #111111 !important;
+      --color-canvas-400: #171717 !important;
+
+      --color-text: #ffffff !important;
+      --color-text-weak: #f5f5f5 !important;
+      --color-text-weaker: #d4d4d4 !important;
+      --color-text-weakest: #b5b5b5 !important;
+
+      --color-border: rgba(255, 255, 255, 0.16) !important;
+      --color-border-dark: rgba(255, 255, 255, 0.22) !important;
+
+      --color-primary: #22c55e !important;
+      --color-primary-dark: #16a34a !important;
+      --color-primary-light: rgba(34, 197, 94, 0.18) !important;
+
+      color: #ffffff !important;
+    }
+
+    elements-api .sl-elements,
+    elements-api .sl-flex,
+    elements-api .sl-stack,
+    elements-api .sl-panel,
+    elements-api .sl-bg-canvas,
+    elements-api .sl-bg-canvas-100,
+    elements-api .sl-bg-canvas-200,
+    elements-api .sl-bg-canvas-300,
+    elements-api .sl-bg-canvas-400 {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+    }
+
+    elements-api [class*="sl-bg-canvas"] {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+    }
+
+    elements-api [class*="sl-bg-muted"],
+    elements-api [class*="sl-bg-neutral"],
+    elements-api [class*="sl-bg-warning"],
+    elements-api [class*="sl-bg-success"],
+    elements-api [class*="sl-bg-danger"],
+    elements-api [class*="sl-bg-info"] {
+      color: #ffffff !important;
+    }
+
+    elements-api [class*="sl-text"],
+    elements-api p,
+    elements-api span,
+    elements-api div,
+    elements-api li,
+    elements-api td,
+    elements-api th,
+    elements-api label,
+    elements-api summary,
+    elements-api details,
+    elements-api h1,
+    elements-api h2,
+    elements-api h3,
+    elements-api h4,
+    elements-api h5,
+    elements-api h6 {
+      color: #ffffff !important;
+    }
+
+    elements-api small,
+    elements-api [class*="weak"],
+    elements-api [class*="muted"],
+    elements-api [class*="secondary"],
+    elements-api [class*="description"] {
+      color: #d4d4d4 !important;
+    }
+
+    elements-api a {
+      color: #4ade80 !important;
+    }
+
+    elements-api pre,
+    elements-api code,
+    elements-api textarea,
+    elements-api input,
+    elements-api select {
+      background-color: #080808 !important;
+      color: #ffffff !important;
+      border-color: rgba(255, 255, 255, 0.18) !important;
+    }
+
+    elements-api pre *,
+    elements-api code * {
+      color: #f5f5f5 !important;
+    }
+
+    elements-api table,
+    elements-api thead,
+    elements-api tbody,
+    elements-api tr,
+    elements-api td,
+    elements-api th {
+      background-color: #000000 !important;
+      border-color: rgba(255, 255, 255, 0.14) !important;
+      color: #ffffff !important;
+    }
+
+    elements-api button,
+    elements-api [role="button"],
+    elements-api [class*="sl-button"] {
+      color: #ffffff !important;
+      border-color: rgba(255, 255, 255, 0.18) !important;
+    }
+
+    elements-api [class*="sl-border"] {
+      border-color: rgba(255, 255, 255, 0.16) !important;
+    }
+
+    elements-api input::placeholder,
+    elements-api textarea::placeholder {
+      color: #a3a3a3 !important;
+    }
+
+    elements-api ::selection {
+      background: rgba(34, 197, 94, 0.32);
+      color: #ffffff;
+    }
+
+    elements-api ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    elements-api ::-webkit-scrollbar-track {
+      background: #000000;
+    }
+
+    elements-api ::-webkit-scrollbar-thumb {
+      background: #2a2a2a;
+      border-radius: 999px;
+      border: 2px solid #000000;
+    }
+
+    elements-api ::-webkit-scrollbar-thumb:hover {
+      background: #404040;
+    }
 
     @media (max-width: 720px) {
-      .topbar { align-items: flex-start; flex-direction: column; }
-      .actions { justify-content: flex-start; }
+      .topbar {
+        height: auto;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .docs-shell {
+        height: calc(100vh - 122px);
+      }
+
+      .actions {
+        justify-content: flex-start;
+      }
     }
   </style>
 </head>
@@ -88,8 +330,11 @@
 <body>
   <header class="topbar">
     <div class="brand">
-      <strong>DoronPay API Documentation</strong>
-      <span>Modern API reference powered by Scalar</span>
+      <div class="logo-mark">D</div>
+      <div class="brand-copy">
+        <strong>DoronPay API Documentation</strong>
+        <span>Unified API Reference</span>
+      </div>
     </div>
 
     <div class="actions">
@@ -99,7 +344,15 @@
   </header>
 
   <div id="error"></div>
-  <div id="api-reference"></div>
+
+  <main class="docs-shell">
+    <elements-api
+      apiDescriptionUrl="./doronpay-unified-api.github-pages.json"
+      router="hash"
+      layout="sidebar"
+      tryItCredentialsPolicy="same-origin">
+    </elements-api>
+  </main>
 
   <script>
     const SPEC_URL = './doronpay-unified-api.github-pages.json';
@@ -116,16 +369,14 @@
       if (!response.ok) {
         throw new Error(
           'Could not load <code>' + SPEC_URL + '</code>. HTTP status: ' + response.status +
-          '. Make sure the JSON file is in the same folder as <code>index.html</code> and the filename matches exactly.'
+          '. Make sure the JSON file is beside <code>index.html</code>.'
         );
       }
 
       try {
         await response.clone().json();
       } catch (error) {
-        throw new Error(
-          'The OpenAPI file was found, but it is not valid JSON. Check for trailing commas or broken syntax.'
-        );
+        throw new Error('The JSON file was found, but it is not valid JSON.');
       }
     }
 
@@ -133,43 +384,11 @@
       showError('Browser error: <code>' + event.message + '</code>');
     });
 
-    verifySpec()
-      .then(function () {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/@scalar/api-reference';
-        script.onload = function () {
-          try {
-            Scalar.createApiReference('#api-reference', {
-              url: SPEC_URL,
-              theme: 'purple',
-              layout: 'modern',
-              darkMode: true,
-              hideDownloadButton: false,
-              hideTestRequestButton: false,
-              defaultHttpClient: {
-                targetKey: 'javascript',
-                clientKey: 'fetch'
-              },
-              metaData: {
-                title: 'DoronPay API Documentation',
-                description: 'DoronPay Unified API Reference'
-              }
-            });
-          } catch (error) {
-            showError('Scalar loaded, but rendering failed: <code>' + error.message + '</code>');
-          }
-        };
-        script.onerror = function () {
-          showError(
-            'The Scalar CDN script could not load. Check your internet connection, ad blocker, or CDN access. ' +
-            'The JSON file may still be available using the <strong>Open JSON</strong> button.'
-          );
-        };
-        document.body.appendChild(script);
-      })
-      .catch(function (error) {
-        showError(error.message);
-      });
+    verifySpec().catch(function (error) {
+      showError(error.message);
+    });
   </script>
+
+  <script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
 </body>
 </html>

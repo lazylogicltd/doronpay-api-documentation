@@ -1,11 +1,12 @@
 {
+  "openapi": "3.0.3",
   "info": {
     "title": "DoronPay Unified API",
     "version": "2.0.0",
     "description": "Swagger-ready unified API specification combining:\n- Customer Custody APIs\n- Spot Trading APIs\n- Cached Crypto Rates APIs\n- V2 Credit / Debit / Transfer transaction APIs\n- Supporting checkout, status, remittance, wallet, and merchant routes\n\nNotes:\n- Routes tagged as internal are typically intended for platform workflows, workers, or admin use.\n- Public routes are suitable for merchant-facing integrations.\n- Callback/webhook payloads are documented in the callbacks section and reusable schemas.\n- Most protected routes use the existing jwt-api strategy. Some public or utility routes are intentionally unauthenticated.\n",
     "contact": {
       "name": "API Support",
-      "email": "info@lazylogiclimited.com"
+      "email": "support@example.com"
     },
     "license": {
       "name": "Proprietary"
