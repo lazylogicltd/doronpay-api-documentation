@@ -90,6 +90,42 @@
     {
       "name": "Internal",
       "description": "Internal or system-only operations"
+    },
+    {
+      "name": "Crypto Remittance Quotes",
+      "description": "Quote-first stablecoin-to-fiat remittance endpoints"
+    },
+    {
+      "name": "Deposit Intents",
+      "description": "Long-lived deposit intent, address monitoring, and deposit event endpoints"
+    },
+    {
+      "name": "Authentication",
+      "description": "API access token generation and authentication endpoints"
+    },
+    {
+      "name": "Stablecoin Production",
+      "description": "Bank-grade stablecoin minting, transfers, redemption, and maker-checker approval endpoints"
+    },
+    {
+      "name": "Stablecoin Mint",
+      "description": "Stablecoin mint request and mint execution endpoints"
+    },
+    {
+      "name": "Stablecoin Approval",
+      "description": "Maker-checker approval endpoints for stablecoin production workflows"
+    },
+    {
+      "name": "Stablecoin Transfer",
+      "description": "Internal stablecoin transfer endpoints"
+    },
+    {
+      "name": "Stablecoin Redemption",
+      "description": "Stablecoin redemption, burn, and fiat payout endpoints"
+    },
+    {
+      "name": "Custody Transfers",
+      "description": "Customer custody wallet transfer endpoints"
     }
   ],
   "security": [
@@ -98,11 +134,259 @@
     }
   ],
   "paths": {
-    "/custody/wallets": {
+    "/admin/crypto-remittances": {
+      "get": {
+        "tags": [
+          "Crypto Remittance Admin"
+        ],
+        "summary": "Admin list crypto remittances",
+        "operationId": "listCryptoRemittancesAdmin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AdminCryptoRemittanceFilters"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/admin/crypto-remittances/by-collection-transaction/{transactionRef}": {
+      "get": {
+        "tags": [
+          "Crypto Remittance Admin"
+        ],
+        "summary": "Admin get crypto remittance by collection transaction reference",
+        "description": "Looks up by collection transaction reference, externalTransactionId, or ObjectId.",
+        "operationId": "getCryptoRemittanceByCollectionTransactionAdmin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TransactionRefPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/admin/crypto-remittances/by-external-reference/{externalReference}": {
+      "get": {
+        "tags": [
+          "Crypto Remittance Admin"
+        ],
+        "summary": "Admin get crypto remittance by external reference",
+        "operationId": "getCryptoRemittanceByExternalReferenceAdmin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ExternalReferencePath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/admin/crypto-remittances/by-payout-transaction/{transactionRef}": {
+      "get": {
+        "tags": [
+          "Crypto Remittance Admin"
+        ],
+        "summary": "Admin get crypto remittance by payout transaction reference",
+        "description": "Looks up by payout transaction reference, externalTransactionId, or ObjectId.",
+        "operationId": "getCryptoRemittanceByPayoutTransactionAdmin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TransactionRefPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/admin/crypto-remittances/summary": {
+      "get": {
+        "tags": [
+          "Crypto Remittance Admin"
+        ],
+        "summary": "Admin crypto remittance summary",
+        "operationId": "getCryptoRemittanceSummaryAdmin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AdminCryptoRemittanceSummaryFilters"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/admin/crypto-remittances/{remittanceId}": {
+      "get": {
+        "tags": [
+          "Crypto Remittance Admin"
+        ],
+        "summary": "Admin get crypto remittance by ID",
+        "operationId": "getCryptoRemittanceAdmin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RemittanceIdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/banks/get": {
+      "get": {
+        "tags": [
+          "Merchant Apps"
+        ],
+        "summary": "Fetch supported bank list",
+        "operationId": "getSupportedBanks",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Supported banks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/checkout": {
       "post": {
-        "tags": ["Custody"],
-        "summary": "Create or get custody wallet",
-        "operationId": "createOrGetCustodyWallet",
+        "tags": [
+          "Checkout & Enquiry"
+        ],
+        "summary": "Generate checkout or payment link",
+        "operationId": "createCheckout",
         "security": [
           {
             "bearerAuth": []
@@ -113,18 +397,617 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateCustodyWalletRequest"
+                "$ref": "#/components/schemas/CheckoutRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Custody wallet ready",
+            "description": "Checkout generated",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CustodyWalletResponse"
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/checkout/status/{id}": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Public checkout transaction status",
+        "operationId": "getCheckoutStatus",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Checkout status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/collections/virtual-account": {
+      "post": {
+        "tags": [
+          "Liquidity & Remittance"
+        ],
+        "summary": "Create MapleRad virtual account",
+        "operationId": "createVirtualAccount",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVirtualAccountRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Virtual account created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/crypto/remittance": {
+      "post": {
+        "tags": [
+          "Crypto Remittance"
+        ],
+        "summary": "Create stablecoin-to-fiat remittance",
+        "operationId": "createCryptoRemittance",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCryptoRemittanceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Crypto Remittance"
+        ],
+        "summary": "Get crypto remittance by external reference",
+        "operationId": "getCryptoRemittanceByExternalReference",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ExternalReferenceQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/crypto/remittance/quote": {
+      "post": {
+        "tags": [
+          "Crypto Remittance Quotes"
+        ],
+        "summary": "Create crypto remittance quote",
+        "description": "Create a crypto remittance quote without creating a remittance intent.",
+        "operationId": "createCryptoRemittanceQuote",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCryptoRemittanceQuoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quote created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/crypto/remittance/quote/{quoteId}": {
+      "get": {
+        "tags": [
+          "Crypto Remittance Quotes"
+        ],
+        "summary": "Get crypto remittance quote by ID",
+        "operationId": "getCryptoRemittanceQuoteById",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QuoteIdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Quote details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/crypto/remittance/quote/{quoteId}/cancel": {
+      "post": {
+        "tags": [
+          "Crypto Remittance Quotes"
+        ],
+        "summary": "Cancel crypto remittance quote",
+        "operationId": "cancelCryptoRemittanceQuote",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QuoteIdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Quote cancelled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/crypto/remittance/quote/{quoteId}/execute": {
+      "post": {
+        "tags": [
+          "Crypto Remittance Quotes"
+        ],
+        "summary": "Execute crypto remittance quote",
+        "description": "Execute a crypto remittance quote and create the remittance intent.",
+        "operationId": "executeCryptoRemittanceQuote",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QuoteIdPath"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExecuteCryptoRemittanceQuoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quote executed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/crypto/remittance/quotes": {
+      "get": {
+        "tags": [
+          "Crypto Remittance Quotes",
+          "Crypto Remittance Admin"
+        ],
+        "summary": "List crypto remittance quotes",
+        "operationId": "listCryptoRemittanceQuotes",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "merchantId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "$ref": "#/components/schemas/CryptoRemittanceQuoteStatus"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sourceNetwork",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sourceAsset",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "destinationCurrency",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "externalReference",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "dateFrom",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "in": "query",
+            "name": "dateTo",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Quote list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/crypto/remittance/reconcile-pending": {
+      "post": {
+        "tags": [
+          "Crypto Remittance",
+          "Internal"
+        ],
+        "summary": "Manually reconcile pending crypto remittances",
+        "operationId": "reconcilePendingCryptoRemittances",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/LimitQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/crypto/remittance/webhooks/send-pending": {
+      "post": {
+        "tags": [
+          "Crypto Remittance",
+          "Internal"
+        ],
+        "summary": "Send pending crypto remittance webhooks",
+        "operationId": "sendPendingCryptoRemittanceWebhooks",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/LimitQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/crypto/remittance/{remittanceId}": {
+      "get": {
+        "tags": [
+          "Crypto Remittance"
+        ],
+        "summary": "Get crypto remittance by ID",
+        "operationId": "getCryptoRemittanceById",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RemittanceIdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/crypto/remittance/{remittanceId}/reconcile": {
+      "post": {
+        "tags": [
+          "Crypto Remittance",
+          "Internal"
+        ],
+        "summary": "Manually reconcile one crypto remittance",
+        "operationId": "reconcileCryptoRemittance",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RemittanceIdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/crypto/remittance/{remittanceId}/webhook/resend": {
+      "post": {
+        "tags": [
+          "Crypto Remittance"
+        ],
+        "summary": "Resend webhook for one crypto remittance",
+        "operationId": "resendCryptoRemittanceWebhook",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RemittanceIdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
                 }
               }
             }
@@ -140,7 +1023,9 @@
     },
     "/custody/asset-wallets": {
       "post": {
-        "tags": ["Custody"],
+        "tags": [
+          "Custody"
+        ],
         "summary": "Create or get custody asset wallet",
         "operationId": "createOrGetCustodyAssetWallet",
         "security": [
@@ -178,47 +1063,11 @@
         }
       }
     },
-    "/custody/wallets/{endCustomerId}": {
-      "get": {
-        "tags": ["Custody"],
-        "summary": "Get wallet summary",
-        "operationId": "getCustodyWalletSummary",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/EndCustomerIdPath"
-          },
-          {
-            "$ref": "#/components/parameters/MerchantIdQuery"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Wallet summary",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
     "/custody/asset-wallets/{assetWalletRef}": {
       "get": {
-        "tags": ["Custody"],
+        "tags": [
+          "Custody"
+        ],
         "summary": "Get asset wallet by reference",
         "operationId": "getAssetWalletByRef",
         "security": [
@@ -256,7 +1105,9 @@
     },
     "/custody/deposit-address": {
       "post": {
-        "tags": ["Custody Deposits"],
+        "tags": [
+          "Custody Deposits"
+        ],
         "summary": "Get or create deposit address",
         "operationId": "getOrCreateDepositAddress",
         "security": [
@@ -296,7 +1147,9 @@
     },
     "/custody/deposit-address/rotate": {
       "post": {
-        "tags": ["Custody Deposits"],
+        "tags": [
+          "Custody Deposits"
+        ],
         "summary": "Rotate deposit address",
         "operationId": "rotateDepositAddress",
         "security": [
@@ -334,9 +1187,128 @@
         }
       }
     },
+    "/custody/deposits": {
+      "post": {
+        "tags": [
+          "Custody Deposits"
+        ],
+        "summary": "Initiate customer custody deposit",
+        "description": "Initiate fiat or crypto deposit into a customer custody wallet.",
+        "operationId": "initiateCustomerCustodyDeposit",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerCustodyDepositRequest"
+              },
+              "examples": {
+                "momoDeposit": {
+                  "summary": "Fiat MOMO custody deposit",
+                  "value": {
+                    "merchantId": "681111111111111111111111",
+                    "endCustomerId": "customer_001",
+                    "externalTransactionId": "dep_001",
+                    "amount": 100,
+                    "currency": "GHS",
+                    "description": "Fund customer GHS custody wallet",
+                    "callbackUrl": "https://merchant.example.com/callback",
+                    "rail": "MOMO",
+                    "target": {
+                      "network": "FIAT",
+                      "asset": "GHS"
+                    },
+                    "source": {
+                      "type": "MOMO",
+                      "provider": "MTN",
+                      "phoneNumber": "0240000000",
+                      "accountName": "John Doe"
+                    },
+                    "idempotencyKey": "custody-dep-001"
+                  }
+                },
+                "bankDeposit": {
+                  "summary": "NGN bank custody deposit",
+                  "value": {
+                    "merchantId": "681111111111111111111111",
+                    "endCustomerId": "customer_002",
+                    "amount": 5000,
+                    "currency": "NGN",
+                    "description": "Fund customer NGN custody wallet",
+                    "callbackUrl": "https://merchant.example.com/callback",
+                    "rail": "BANK",
+                    "target": {
+                      "network": "FIAT",
+                      "asset": "NGN"
+                    },
+                    "source": {
+                      "type": "BANK",
+                      "accountNumber": "0123456789",
+                      "accountName": "John Doe",
+                      "issuer": "gtbank",
+                      "bankCode": "058"
+                    },
+                    "idempotencyKey": "custody-dep-ngn-001"
+                  }
+                },
+                "cryptoDeposit": {
+                  "summary": "Crypto custody deposit",
+                  "value": {
+                    "merchantId": "681111111111111111111111",
+                    "endCustomerId": "customer_003",
+                    "amount": 25,
+                    "currency": "USDT",
+                    "description": "Fund customer USDT custody wallet",
+                    "callbackUrl": "https://merchant.example.com/callback",
+                    "rail": "CRYPTO",
+                    "target": {
+                      "network": "TRC20",
+                      "asset": "USDT"
+                    },
+                    "source": {
+                      "type": "CRYPTO",
+                      "network": "TRC20",
+                      "asset": "USDT",
+                      "walletAddress": "TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE"
+                    },
+                    "idempotencyKey": "custody-dep-usdt-001"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Custody deposit initiated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
     "/custody/deposits/credit": {
       "post": {
-        "tags": ["Custody Deposits", "Internal"],
+        "tags": [
+          "Custody Deposits",
+          "Internal"
+        ],
         "summary": "Credit custody deposit",
         "description": "Internal/system endpoint for crediting confirmed deposits.",
         "operationId": "creditCustodyDeposit",
@@ -375,9 +1347,476 @@
         }
       }
     },
+    "/custody/trading/execute": {
+      "post": {
+        "tags": [
+          "Trading"
+        ],
+        "summary": "Execute trade quote",
+        "operationId": "executeTradeQuote",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExecuteTradeQuoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Trade executed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/custody/trading/executions": {
+      "get": {
+        "tags": [
+          "Trading"
+        ],
+        "summary": "List trade executions",
+        "operationId": "listTradeExecutions",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/MerchantIdQuery"
+          },
+          {
+            "in": "query",
+            "name": "endCustomerId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "assetWalletId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trade executions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/custody/trading/pairs": {
+      "get": {
+        "tags": [
+          "Trading"
+        ],
+        "summary": "List trading pairs",
+        "operationId": "listTradingPairs",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "baseAsset",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "quoteAsset",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "DISABLED"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trading pairs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/custody/trading/quote": {
+      "post": {
+        "tags": [
+          "Trading"
+        ],
+        "summary": "Create trade quote",
+        "operationId": "createTradeQuote",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTradeQuoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quote created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/custody/trading/quotes/{quoteRef}": {
+      "get": {
+        "tags": [
+          "Trading"
+        ],
+        "summary": "Get trade quote by reference",
+        "operationId": "getTradeQuoteByRef",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QuoteRefPath"
+          },
+          {
+            "$ref": "#/components/parameters/MerchantIdQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trade quote",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/custody/transfers": {
+      "post": {
+        "tags": [
+          "Custody Transfers"
+        ],
+        "summary": "Transfer custody assets between customers",
+        "description": "Transfer custody assets between two customer asset wallets.",
+        "operationId": "transferBetweenCustomerCustodyWallets",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerCustodyTransferRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Custody transfer created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Custody Transfers"
+        ],
+        "summary": "List customer custody transfers",
+        "description": "List customer custody transfers.",
+        "operationId": "listCustomerCustodyTransfers",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "merchantId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            }
+          },
+          {
+            "in": "query",
+            "name": "endCustomerId",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          },
+          {
+            "in": "query",
+            "name": "fromEndCustomerId",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          },
+          {
+            "in": "query",
+            "name": "toEndCustomerId",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            }
+          },
+          {
+            "in": "query",
+            "name": "assetWalletId",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            }
+          },
+          {
+            "in": "query",
+            "name": "network",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "FIAT",
+                "POLYGON",
+                "BEP20",
+                "TRC20",
+                "SOLANA",
+                "ERC20",
+                "BTC"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "asset",
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 20
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "$ref": "#/components/schemas/CustodyTransferStatus"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Custody transfers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/custody/wallets": {
+      "post": {
+        "tags": [
+          "Custody"
+        ],
+        "summary": "Create or get custody wallet",
+        "operationId": "createOrGetCustodyWallet",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustodyWalletRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Custody wallet ready",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustodyWalletResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/custody/wallets/{endCustomerId}": {
+      "get": {
+        "tags": [
+          "Custody"
+        ],
+        "summary": "Get wallet summary",
+        "operationId": "getCustodyWalletSummary",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/EndCustomerIdPath"
+          },
+          {
+            "$ref": "#/components/parameters/MerchantIdQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Wallet summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
     "/custody/withdrawals": {
       "post": {
-        "tags": ["Custody Withdrawals"],
+        "tags": [
+          "Custody Withdrawals"
+        ],
         "summary": "Request withdrawal",
         "description": "Creates a custody withdrawal request.\n\nBehavior:\n- When `autoPayoutEnabled = true`, the withdrawal can be picked automatically by the internal payout orchestration after approval.\n- When `autoPayoutEnabled = false`, the withdrawal remains approved until manually processed.\n",
         "operationId": "requestCustodyWithdrawal",
@@ -438,7 +1877,9 @@
         }
       },
       "get": {
-        "tags": ["Custody Withdrawals"],
+        "tags": [
+          "Custody Withdrawals"
+        ],
         "summary": "List withdrawals",
         "operationId": "listCustodyWithdrawals",
         "security": [
@@ -503,7 +1944,10 @@
     },
     "/custody/withdrawals/approve": {
       "post": {
-        "tags": ["Custody Withdrawals", "Internal"],
+        "tags": [
+          "Custody Withdrawals",
+          "Internal"
+        ],
         "summary": "Approve withdrawal",
         "description": "Internal/system endpoint.",
         "operationId": "approveCustodyWithdrawal",
@@ -542,9 +1986,56 @@
         }
       }
     },
+    "/custody/withdrawals/failed": {
+      "post": {
+        "tags": [
+          "Custody Withdrawals",
+          "Internal"
+        ],
+        "summary": "Mark withdrawal failed",
+        "description": "Internal/system endpoint.",
+        "operationId": "markWithdrawalFailed",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawalFailedRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Withdrawal marked failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
     "/custody/withdrawals/processing": {
       "post": {
-        "tags": ["Custody Withdrawals", "Internal"],
+        "tags": [
+          "Custody Withdrawals",
+          "Internal"
+        ],
         "summary": "Mark withdrawal processing",
         "description": "Internal/system endpoint.",
         "operationId": "markWithdrawalProcessing",
@@ -585,7 +2076,10 @@
     },
     "/custody/withdrawals/sent": {
       "post": {
-        "tags": ["Custody Withdrawals", "Internal"],
+        "tags": [
+          "Custody Withdrawals",
+          "Internal"
+        ],
         "summary": "Mark withdrawal sent",
         "description": "Internal/system endpoint.",
         "operationId": "markWithdrawalSent",
@@ -624,12 +2118,75 @@
         }
       }
     },
-    "/custody/withdrawals/failed": {
+    "/date/filter": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Filter transactions by date and status",
+        "operationId": "filterTransactionsByDate",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/MerchantIdQuery"
+          },
+          {
+            "in": "query",
+            "name": "startDate",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "in": "query",
+            "name": "endDate",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Filtered transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/deposit-intents": {
       "post": {
-        "tags": ["Custody Withdrawals", "Internal"],
-        "summary": "Mark withdrawal failed",
-        "description": "Internal/system endpoint.",
-        "operationId": "markWithdrawalFailed",
+        "tags": [
+          "Deposit Intents"
+        ],
+        "summary": "Create or reuse deposit intent",
+        "description": "Create or return a long-lived deposit intent with a permanent address.",
+        "operationId": "createOrReuseDepositIntent",
         "security": [
           {
             "bearerAuth": []
@@ -640,14 +2197,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WithdrawalFailedRequest"
+                "$ref": "#/components/schemas/CreateDepositIntentRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Withdrawal marked failed",
+            "description": "Deposit intent created or reused",
             "content": {
               "application/json": {
                 "schema": {
@@ -665,11 +2222,57 @@
         }
       }
     },
-    "/custody/trading/pairs": {
+    "/deposit-intents/internal/external-address": {
+      "post": {
+        "tags": [
+          "Deposit Intents",
+          "Internal"
+        ],
+        "summary": "Create or reuse external-address deposit monitor",
+        "description": "Create or reuse one deposit monitor intent for an externally-owned address.",
+        "operationId": "createOrReuseExternalAddressDepositIntent",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalAddressDepositIntentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "External-address monitor intent created or reused",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/deposit-intents/{intentCode}": {
       "get": {
-        "tags": ["Trading"],
-        "summary": "List trading pairs",
-        "operationId": "listTradingPairs",
+        "tags": [
+          "Deposit Intents"
+        ],
+        "summary": "Get deposit intent by intentCode",
+        "operationId": "getDepositIntentByCode",
         "security": [
           {
             "bearerAuth": []
@@ -677,15 +2280,58 @@
         ],
         "parameters": [
           {
-            "in": "query",
-            "name": "baseAsset",
-            "schema": {
-              "type": "string"
+            "$ref": "#/components/parameters/IntentCodePath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deposit intent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "Deposit intent not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/deposit-intents/{intentCode}/events": {
+      "get": {
+        "tags": [
+          "Deposit Intents"
+        ],
+        "summary": "Fetch deposit events for a deposit intent",
+        "operationId": "getDepositEventsByIntent",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IntentCodePath"
           },
           {
             "in": "query",
-            "name": "quoteAsset",
+            "name": "address",
             "schema": {
               "type": "string"
             }
@@ -694,8 +2340,7 @@
             "in": "query",
             "name": "status",
             "schema": {
-              "type": "string",
-              "enum": ["ACTIVE", "DISABLED"]
+              "$ref": "#/components/schemas/DepositEventStatus"
             }
           },
           {
@@ -704,13 +2349,14 @@
             "schema": {
               "type": "integer",
               "minimum": 1,
-              "maximum": 200
+              "maximum": 200,
+              "default": 50
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Trading pairs",
+            "description": "Deposit events",
             "content": {
               "application/json": {
                 "schema": {
@@ -718,15 +2364,71 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
     },
-    "/custody/trading/quote": {
+    "/deposit-intents/{intentCode}/retire": {
       "post": {
-        "tags": ["Trading"],
-        "summary": "Create trade quote",
-        "operationId": "createTradeQuote",
+        "tags": [
+          "Deposit Intents"
+        ],
+        "summary": "Retire deposit intent",
+        "description": "Retire a long-lived deposit intent and its linked address.",
+        "operationId": "retireDepositIntent",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IntentCodePath"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RetireDepositIntentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Deposit intent retired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/enquiry": {
+      "post": {
+        "tags": [
+          "Checkout & Enquiry"
+        ],
+        "summary": "Perform mobile money or bank enquiry",
+        "operationId": "performEnquiry",
         "security": [
           {
             "bearerAuth": []
@@ -737,14 +2439,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateTradeQuoteRequest"
+                "$ref": "#/components/schemas/EnquiryRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Quote created",
+            "description": "Enquiry result",
             "content": {
               "application/json": {
                 "schema": {
@@ -756,11 +2458,13 @@
         }
       }
     },
-    "/custody/trading/execute": {
+    "/generatekey": {
       "post": {
-        "tags": ["Trading"],
-        "summary": "Execute trade quote",
-        "operationId": "executeTradeQuote",
+        "tags": [
+          "Merchant Apps"
+        ],
+        "summary": "Generate API key for merchant app",
+        "operationId": "generateMerchantAppKey",
         "security": [
           {
             "bearerAuth": []
@@ -771,14 +2475,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ExecuteTradeQuoteRequest"
+                "$ref": "#/components/schemas/GenerateMerchantKeyRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Trade executed",
+            "description": "API key generated",
             "content": {
               "application/json": {
                 "schema": {
@@ -790,11 +2494,39 @@
         }
       }
     },
-    "/custody/trading/quotes/{quoteRef}": {
+    "/get": {
       "get": {
-        "tags": ["Trading"],
-        "summary": "Get trade quote by reference",
-        "operationId": "getTradeQuoteByRef",
+        "tags": [
+          "Merchant Apps"
+        ],
+        "summary": "List applications or merchant apps",
+        "operationId": "listMerchantApps",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Merchant apps list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get/{id}": {
+      "get": {
+        "tags": [
+          "Merchant Apps"
+        ],
+        "summary": "Fetch merchant app by id",
+        "operationId": "getMerchantAppById",
         "security": [
           {
             "bearerAuth": []
@@ -802,15 +2534,12 @@
         ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/QuoteRefPath"
-          },
-          {
-            "$ref": "#/components/parameters/MerchantIdQuery"
+            "$ref": "#/components/parameters/IdPath"
           }
         ],
         "responses": {
           "200": {
-            "description": "Trade quote",
+            "description": "Merchant app",
             "content": {
               "application/json": {
                 "schema": {
@@ -822,11 +2551,127 @@
         }
       }
     },
-    "/custody/trading/executions": {
+    "/new": {
+      "post": {
+        "tags": [
+          "Merchant Apps"
+        ],
+        "summary": "Create new app or user mapping",
+        "operationId": "createMerchantApp",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMerchantAppRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Merchant app created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment-data/decrypt": {
+      "post": {
+        "tags": [
+          "Wallet Utilities"
+        ],
+        "summary": "Decrypt encrypted payment data",
+        "operationId": "decryptPaymentData",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecryptPaymentDataRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Decrypted payment data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payout-approval-rules/create": {
+      "post": {
+        "tags": [
+          "Payout Approval Rules"
+        ],
+        "summary": "Create payout approval rule",
+        "operationId": "createPayoutApprovalRule",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePayoutApprovalRuleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/payout-approval-rules/list": {
       "get": {
-        "tags": ["Trading"],
-        "summary": "List trade executions",
-        "operationId": "listTradeExecutions",
+        "tags": [
+          "Payout Approval Rules"
+        ],
+        "summary": "List payout approval rules",
+        "operationId": "listPayoutApprovalRules",
         "security": [
           {
             "bearerAuth": []
@@ -834,35 +2679,612 @@
         ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/MerchantIdQuery"
-          },
-          {
-            "in": "query",
-            "name": "endCustomerId",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "assetWalletId",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 200
-            }
+            "$ref": "#/components/parameters/PayoutApprovalRuleFilters"
           }
         ],
         "responses": {
           "200": {
-            "description": "Trade executions",
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/payout-approval-rules/{ruleId}": {
+      "get": {
+        "tags": [
+          "Payout Approval Rules"
+        ],
+        "summary": "Get payout approval rule",
+        "operationId": "getPayoutApprovalRule",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PayoutApprovalRuleIdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Payout Approval Rules"
+        ],
+        "summary": "Update payout approval rule",
+        "operationId": "updatePayoutApprovalRule",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PayoutApprovalRuleIdPath"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePayoutApprovalRuleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/payout-approval-rules/{ruleId}/disable": {
+      "post": {
+        "tags": [
+          "Payout Approval Rules"
+        ],
+        "summary": "Disable payout approval rule",
+        "operationId": "disablePayoutApprovalRule",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PayoutApprovalRuleIdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/payout-approval-rules/{ruleId}/enable": {
+      "post": {
+        "tags": [
+          "Payout Approval Rules"
+        ],
+        "summary": "Enable payout approval rule",
+        "operationId": "enablePayoutApprovalRule",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PayoutApprovalRuleIdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/production/approvals/{approvalId}/approve": {
+      "post": {
+        "tags": [
+          "Stablecoin Production",
+          "Stablecoin Approval"
+        ],
+        "summary": "Approve stablecoin approval request",
+        "description": "Checker approves a stablecoin approval request.",
+        "operationId": "approveStablecoinApproval",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ObjectIdApprovalIdPath"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StablecoinApprovalNoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Approval approved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/production/approvals/{approvalId}/execute-mint": {
+      "post": {
+        "tags": [
+          "Stablecoin Production",
+          "Stablecoin Mint"
+        ],
+        "summary": "Execute approved mint request",
+        "description": "Execute fully approved mint request.",
+        "operationId": "executeApprovedStablecoinMint",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ObjectIdApprovalIdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Approved mint executed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/production/approvals/{approvalId}/execute-redemption": {
+      "post": {
+        "tags": [
+          "Stablecoin Production",
+          "Stablecoin Redemption"
+        ],
+        "summary": "Execute approved redemption burn",
+        "description": "Execute approved redemption burn.",
+        "operationId": "executeApprovedStablecoinRedemptionBurn",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ObjectIdApprovalIdPath"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApproveStablecoinRedemptionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Approved redemption burn executed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/production/approvals/{approvalId}/reject": {
+      "post": {
+        "tags": [
+          "Stablecoin Production",
+          "Stablecoin Approval"
+        ],
+        "summary": "Reject stablecoin approval request",
+        "description": "Checker rejects a stablecoin approval request.",
+        "operationId": "rejectStablecoinApproval",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ObjectIdApprovalIdPath"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StablecoinApprovalRejectRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Approval rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/production/mint": {
+      "post": {
+        "tags": [
+          "Stablecoin Production",
+          "Stablecoin Mint"
+        ],
+        "summary": "Create stablecoin mint request",
+        "description": "Create bank-grade mint request and open maker-checker approval.",
+        "operationId": "createStablecoinMintRequest",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateStablecoinMintRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mint request created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/production/mint/{requestId}/confirm-funds": {
+      "post": {
+        "tags": [
+          "Stablecoin Production",
+          "Stablecoin Mint"
+        ],
+        "summary": "Confirm mint reserve funds",
+        "description": "Confirm GHS reserve funds before mint approval execution.",
+        "operationId": "confirmStablecoinMintFunds",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ObjectIdRequestIdPath"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmMintFundsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mint funds confirmed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/production/redeem": {
+      "post": {
+        "tags": [
+          "Stablecoin Production",
+          "Stablecoin Redemption"
+        ],
+        "summary": "Create stablecoin redemption request",
+        "description": "Create bank-grade redemption request and open maker-checker approval.",
+        "operationId": "createStablecoinRedemptionRequest",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateStablecoinRedemptionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Redemption request created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/production/redeem/{requestId}/mark-paid": {
+      "post": {
+        "tags": [
+          "Stablecoin Production",
+          "Stablecoin Redemption"
+        ],
+        "summary": "Mark stablecoin redemption paid",
+        "description": "Mark redemption fiat payout as paid.",
+        "operationId": "markStablecoinRedemptionPaid",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ObjectIdRequestIdPath"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkStablecoinRedemptionPaidRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Redemption marked paid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/production/transfer": {
+      "post": {
+        "tags": [
+          "Stablecoin Production",
+          "Stablecoin Transfer"
+        ],
+        "summary": "Execute internal stablecoin transfer",
+        "description": "Execute locked internal dGHS transfer.",
+        "operationId": "createStablecoinTransfer",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateStablecoinTransferRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Stablecoin transfer executed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/public-key": {
+      "get": {
+        "tags": [
+          "Wallet Utilities"
+        ],
+        "summary": "Fetch payment-data encryption public key",
+        "operationId": "getPublicKey",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Public key",
             "content": {
               "application/json": {
                 "schema": {
@@ -874,11 +3296,179 @@
         }
       }
     },
-    "/custody/trading/rates/crypto": {
+    "/remittance/institutions": {
       "get": {
-        "tags": ["Trading Rates"],
+        "tags": [
+          "Liquidity & Remittance"
+        ],
+        "summary": "Fetch MapleRad institutions by country",
+        "operationId": "getRemittanceInstitutions",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "country",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Institutions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/remittance/verify/{id}": {
+      "get": {
+        "tags": [
+          "Liquidity & Remittance"
+        ],
+        "summary": "Verify remittance transaction by id",
+        "operationId": "verifyRemittanceTransaction",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Remittance verification result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/status/{id}": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Fetch transaction status",
+        "operationId": "getTransactionStatus",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transaction status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/system/liquidity-status": {
+      "get": {
+        "tags": [
+          "Liquidity & Remittance"
+        ],
+        "summary": "Get USDT and BTC liquidity status per chain",
+        "operationId": "getLiquidityStatus",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liquidity status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/token": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Generate API access token",
+        "description": "Generate API access token using merchant API key, merchant ID, and optional operation scope.",
+        "operationId": "generateApiAccessToken",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateApiAccessTokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateApiAccessTokenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenBadRequestResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/trading/rates/crypto": {
+      "get": {
+        "tags": [
+          "Trading Rates"
+        ],
         "summary": "List cached crypto rates",
-        "operationId": "listCachedCryptoRates",
+        "operationId": "listCachedCryptoRatesPublicPath",
         "security": [
           {
             "bearerAuth": []
@@ -890,7 +3480,11 @@
             "name": "status",
             "schema": {
               "type": "string",
-              "enum": ["ACTIVE", "STALE", "FAILED"]
+              "enum": [
+                "ACTIVE",
+                "STALE",
+                "FAILED"
+              ]
             }
           },
           {
@@ -913,15 +3507,23 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
     },
-    "/custody/trading/rates/crypto/quote": {
+    "/trading/rates/crypto/quote": {
       "get": {
-        "tags": ["Trading Rates"],
+        "tags": [
+          "Trading Rates"
+        ],
         "summary": "Get cached crypto rate",
-        "operationId": "getCachedCryptoRate",
+        "operationId": "getCachedCryptoRatePublicPath",
         "security": [
           {
             "bearerAuth": []
@@ -939,14 +3541,18 @@
             "in": "query",
             "name": "baseAsset",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 20
             }
           },
           {
             "in": "query",
             "name": "quoteAsset",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 20
             }
           },
           {
@@ -969,13 +3575,184 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/transactions/summary/v2/{id}": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Fetch V2 transaction summary",
+        "operationId": "getV2TransactionSummary",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "V2 transaction summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/summary/{id}": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Fetch legacy transaction summary",
+        "operationId": "getLegacyTransactionSummary",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Legacy transaction summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/{id}": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Fetch transaction details",
+        "operationId": "getTransactionDetails",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transaction details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/update": {
+      "post": {
+        "tags": [
+          "Merchant Apps"
+        ],
+        "summary": "Update app or hub data",
+        "operationId": "updateMerchantApp",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMerchantAppRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "App updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Merchant Apps"
+        ],
+        "summary": "Update app or hub data",
+        "operationId": "updateMerchantAppPut",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMerchantAppRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "App updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
           }
         }
       }
     },
     "/v2/credit": {
       "post": {
-        "tags": ["Credit V2"],
+        "tags": [
+          "Credit V2"
+        ],
         "summary": "Create payout transaction",
         "operationId": "createCreditV2",
         "security": [
@@ -1033,7 +3810,9 @@
     },
     "/v2/debit": {
       "post": {
-        "tags": ["Debit V2"],
+        "tags": [
+          "Debit V2"
+        ],
         "summary": "Create collection transaction",
         "operationId": "createDebitV2",
         "security": [
@@ -1091,7 +3870,9 @@
     },
     "/v2/transfer": {
       "post": {
-        "tags": ["Transfer V2"],
+        "tags": [
+          "Transfer V2"
+        ],
         "summary": "Create transfer transaction",
         "operationId": "createTransferV2",
         "security": [
@@ -1149,7 +3930,9 @@
     },
     "/wallet/balance": {
       "post": {
-        "tags": ["Wallet Utilities"],
+        "tags": [
+          "Wallet Utilities"
+        ],
         "summary": "Fetch merchant wallet balance",
         "operationId": "getWalletBalance",
         "security": [
@@ -1181,331 +3964,11 @@
         }
       }
     },
-    "/public-key": {
-      "get": {
-        "tags": ["Wallet Utilities"],
-        "summary": "Fetch payment-data encryption public key",
-        "operationId": "getPublicKey",
-        "security": [],
-        "responses": {
-          "200": {
-            "description": "Public key",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/payment-data/decrypt": {
-      "post": {
-        "tags": ["Wallet Utilities"],
-        "summary": "Decrypt encrypted payment data",
-        "operationId": "decryptPaymentData",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DecryptPaymentDataRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Decrypted payment data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/checkout": {
-      "post": {
-        "tags": ["Checkout & Enquiry"],
-        "summary": "Generate checkout or payment link",
-        "operationId": "createCheckout",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CheckoutRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Checkout generated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/enquiry": {
-      "post": {
-        "tags": ["Checkout & Enquiry"],
-        "summary": "Perform mobile money or bank enquiry",
-        "operationId": "performEnquiry",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EnquiryRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Enquiry result",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/date/filter": {
-      "get": {
-        "tags": ["Transactions"],
-        "summary": "Filter transactions by date and status",
-        "operationId": "filterTransactionsByDate",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/MerchantIdQuery"
-          },
-          {
-            "in": "query",
-            "name": "startDate",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "in": "query",
-            "name": "endDate",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "search",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Filtered transactions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/transactions/summary/{id}": {
-      "get": {
-        "tags": ["Transactions"],
-        "summary": "Fetch legacy transaction summary",
-        "operationId": "getLegacyTransactionSummary",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/IdPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Legacy transaction summary",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/transactions/summary/v2/{id}": {
-      "get": {
-        "tags": ["Transactions"],
-        "summary": "Fetch V2 transaction summary",
-        "operationId": "getV2TransactionSummary",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/IdPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "V2 transaction summary",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/status/{id}": {
-      "get": {
-        "tags": ["Transactions"],
-        "summary": "Fetch transaction status",
-        "operationId": "getTransactionStatus",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/IdPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Transaction status",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/checkout/status/{id}": {
-      "get": {
-        "tags": ["Transactions"],
-        "summary": "Public checkout transaction status",
-        "operationId": "getCheckoutStatus",
-        "security": [],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/IdPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Checkout status",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/transactions/{id}": {
-      "get": {
-        "tags": ["Transactions"],
-        "summary": "Fetch transaction details",
-        "operationId": "getTransactionDetails",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/IdPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Transaction details",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/{transferId}/crypto-hashes": {
       "get": {
-        "tags": ["Transactions"],
+        "tags": [
+          "Transactions"
+        ],
         "summary": "Fetch transfer-related crypto hashes",
         "operationId": "getTransferCryptoHashes",
         "security": [
@@ -1533,1016 +3996,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/get": {
-      "get": {
-        "tags": ["Merchant Apps"],
-        "summary": "List applications or merchant apps",
-        "operationId": "listMerchantApps",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Merchant apps list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/get/{id}": {
-      "get": {
-        "tags": ["Merchant Apps"],
-        "summary": "Fetch merchant app by id",
-        "operationId": "getMerchantAppById",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/IdPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Merchant app",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/new": {
-      "post": {
-        "tags": ["Merchant Apps"],
-        "summary": "Create new app or user mapping",
-        "operationId": "createMerchantApp",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateMerchantAppRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Merchant app created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/generatekey": {
-      "post": {
-        "tags": ["Merchant Apps"],
-        "summary": "Generate API key for merchant app",
-        "operationId": "generateMerchantAppKey",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GenerateMerchantKeyRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "API key generated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/update": {
-      "post": {
-        "tags": ["Merchant Apps"],
-        "summary": "Update app or hub data",
-        "operationId": "updateMerchantApp",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateMerchantAppRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "App updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": ["Merchant Apps"],
-        "summary": "Update app or hub data",
-        "operationId": "updateMerchantAppPut",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateMerchantAppRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "App updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/banks/get": {
-      "get": {
-        "tags": ["Merchant Apps"],
-        "summary": "Fetch supported bank list",
-        "operationId": "getSupportedBanks",
-        "security": [],
-        "responses": {
-          "200": {
-            "description": "Supported banks",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/system/liquidity-status": {
-      "get": {
-        "tags": ["Liquidity & Remittance"],
-        "summary": "Get USDT and BTC liquidity status per chain",
-        "operationId": "getLiquidityStatus",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Liquidity status",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/remittance/institutions": {
-      "get": {
-        "tags": ["Liquidity & Remittance"],
-        "summary": "Fetch MapleRad institutions by country",
-        "operationId": "getRemittanceInstitutions",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "country",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Institutions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/collections/virtual-account": {
-      "post": {
-        "tags": ["Liquidity & Remittance"],
-        "summary": "Create MapleRad virtual account",
-        "operationId": "createVirtualAccount",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateVirtualAccountRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Virtual account created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/remittance/verify/{id}": {
-      "get": {
-        "tags": ["Liquidity & Remittance"],
-        "summary": "Verify remittance transaction by id",
-        "operationId": "verifyRemittanceTransaction",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/IdPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Remittance verification result",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/crypto/remittance": {
-      "post": {
-        "tags": ["Crypto Remittance"],
-        "summary": "Create stablecoin-to-fiat remittance",
-        "operationId": "createCryptoRemittance",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateCryptoRemittanceRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      },
-      "get": {
-        "tags": ["Crypto Remittance"],
-        "summary": "Get crypto remittance by external reference",
-        "operationId": "getCryptoRemittanceByExternalReference",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/ExternalReferenceQuery"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/crypto/remittance/{remittanceId}": {
-      "get": {
-        "tags": ["Crypto Remittance"],
-        "summary": "Get crypto remittance by ID",
-        "operationId": "getCryptoRemittanceById",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RemittanceIdPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/crypto/remittance/{remittanceId}/reconcile": {
-      "post": {
-        "tags": ["Crypto Remittance", "Internal"],
-        "summary": "Manually reconcile one crypto remittance",
-        "operationId": "reconcileCryptoRemittance",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RemittanceIdPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/crypto/remittance/reconcile-pending": {
-      "post": {
-        "tags": ["Crypto Remittance", "Internal"],
-        "summary": "Manually reconcile pending crypto remittances",
-        "operationId": "reconcilePendingCryptoRemittances",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/LimitQuery"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/crypto/remittance/{remittanceId}/webhook/resend": {
-      "post": {
-        "tags": ["Crypto Remittance"],
-        "summary": "Resend webhook for one crypto remittance",
-        "operationId": "resendCryptoRemittanceWebhook",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RemittanceIdPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/crypto/remittance/webhooks/send-pending": {
-      "post": {
-        "tags": ["Crypto Remittance", "Internal"],
-        "summary": "Send pending crypto remittance webhooks",
-        "operationId": "sendPendingCryptoRemittanceWebhooks",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/LimitQuery"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/admin/crypto-remittances": {
-      "get": {
-        "tags": ["Crypto Remittance Admin"],
-        "summary": "Admin list crypto remittances",
-        "operationId": "listCryptoRemittancesAdmin",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/AdminCryptoRemittanceFilters"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/admin/crypto-remittances/summary": {
-      "get": {
-        "tags": ["Crypto Remittance Admin"],
-        "summary": "Admin crypto remittance summary",
-        "operationId": "getCryptoRemittanceSummaryAdmin",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/AdminCryptoRemittanceSummaryFilters"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/admin/crypto-remittances/{remittanceId}": {
-      "get": {
-        "tags": ["Crypto Remittance Admin"],
-        "summary": "Admin get crypto remittance by ID",
-        "operationId": "getCryptoRemittanceAdmin",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RemittanceIdPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/admin/crypto-remittances/by-external-reference/{externalReference}": {
-      "get": {
-        "tags": ["Crypto Remittance Admin"],
-        "summary": "Admin get crypto remittance by external reference",
-        "operationId": "getCryptoRemittanceByExternalReferenceAdmin",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/ExternalReferencePath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/admin/crypto-remittances/by-collection-transaction/{transactionRef}": {
-      "get": {
-        "tags": ["Crypto Remittance Admin"],
-        "summary": "Admin get crypto remittance by collection transaction reference",
-        "description": "Looks up by collection transaction reference, externalTransactionId, or ObjectId.",
-        "operationId": "getCryptoRemittanceByCollectionTransactionAdmin",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/TransactionRefPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/admin/crypto-remittances/by-payout-transaction/{transactionRef}": {
-      "get": {
-        "tags": ["Crypto Remittance Admin"],
-        "summary": "Admin get crypto remittance by payout transaction reference",
-        "description": "Looks up by payout transaction reference, externalTransactionId, or ObjectId.",
-        "operationId": "getCryptoRemittanceByPayoutTransactionAdmin",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/TransactionRefPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/payout-approval-rules/create": {
-      "post": {
-        "tags": ["Payout Approval Rules"],
-        "summary": "Create payout approval rule",
-        "operationId": "createPayoutApprovalRule",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePayoutApprovalRuleRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/payout-approval-rules/list": {
-      "get": {
-        "tags": ["Payout Approval Rules"],
-        "summary": "List payout approval rules",
-        "operationId": "listPayoutApprovalRules",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/PayoutApprovalRuleFilters"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/payout-approval-rules/{ruleId}": {
-      "get": {
-        "tags": ["Payout Approval Rules"],
-        "summary": "Get payout approval rule",
-        "operationId": "getPayoutApprovalRule",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/PayoutApprovalRuleIdPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      },
-      "patch": {
-        "tags": ["Payout Approval Rules"],
-        "summary": "Update payout approval rule",
-        "operationId": "updatePayoutApprovalRule",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/PayoutApprovalRuleIdPath"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePayoutApprovalRuleRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/payout-approval-rules/{ruleId}/enable": {
-      "post": {
-        "tags": ["Payout Approval Rules"],
-        "summary": "Enable payout approval rule",
-        "operationId": "enablePayoutApprovalRule",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/PayoutApprovalRuleIdPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/payout-approval-rules/{ruleId}/disable": {
-      "post": {
-        "tags": ["Payout Approval Rules"],
-        "summary": "Disable payout approval rule",
-        "operationId": "disablePayoutApprovalRule",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/PayoutApprovalRuleIdPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -2680,6 +4133,44 @@
         "schema": {
           "$ref": "#/components/schemas/ListPayoutApprovalRulesQuery"
         }
+      },
+      "QuoteIdPath": {
+        "in": "path",
+        "name": "quoteId",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Crypto remittance quote identifier"
+      },
+      "IntentCodePath": {
+        "in": "path",
+        "name": "intentCode",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Deposit intent code"
+      },
+      "ObjectIdRequestIdPath": {
+        "in": "path",
+        "name": "requestId",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{24}$"
+        },
+        "description": "MongoDB ObjectId request identifier"
+      },
+      "ObjectIdApprovalIdPath": {
+        "in": "path",
+        "name": "approvalId",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{24}$"
+        },
+        "description": "MongoDB ObjectId approval identifier"
       }
     },
     "responses": {
@@ -2759,7 +4250,10 @@
       },
       "CreateCustodyWalletRequest": {
         "type": "object",
-        "required": ["merchantId", "endCustomerId"],
+        "required": [
+          "merchantId",
+          "endCustomerId"
+        ],
         "properties": {
           "merchantId": {
             "type": "string"
@@ -2772,7 +4266,10 @@
           },
           "custodyMode": {
             "type": "string",
-            "enum": ["OMNIBUS", "SEGREGATED"]
+            "enum": [
+              "OMNIBUS",
+              "SEGREGATED"
+            ]
           },
           "metadata": {
             "type": "object",
@@ -2782,7 +4279,12 @@
       },
       "CreateAssetWalletRequest": {
         "type": "object",
-        "required": ["merchantId", "endCustomerId", "network", "asset"],
+        "required": [
+          "merchantId",
+          "endCustomerId",
+          "network",
+          "asset"
+        ],
         "properties": {
           "merchantId": {
             "type": "string"
@@ -2792,11 +4294,21 @@
           },
           "network": {
             "type": "string",
-            "enum": ["POLYGON", "BEP20", "TRC20", "SOLANA", "ERC20"]
+            "enum": [
+              "POLYGON",
+              "BEP20",
+              "TRC20",
+              "SOLANA",
+              "ERC20"
+            ]
           },
           "asset": {
             "type": "string",
-            "enum": ["USDT", "USDC", "BTC"]
+            "enum": [
+              "USDT",
+              "USDC",
+              "BTC"
+            ]
           },
           "label": {
             "type": "string"
@@ -2809,7 +4321,12 @@
       },
       "CreateDepositAddressRequest": {
         "type": "object",
-        "required": ["merchantId", "endCustomerId", "network", "asset"],
+        "required": [
+          "merchantId",
+          "endCustomerId",
+          "network",
+          "asset"
+        ],
         "properties": {
           "merchantId": {
             "type": "string"
@@ -2819,11 +4336,21 @@
           },
           "network": {
             "type": "string",
-            "enum": ["POLYGON", "BEP20", "TRC20", "SOLANA", "ERC20"]
+            "enum": [
+              "POLYGON",
+              "BEP20",
+              "TRC20",
+              "SOLANA",
+              "ERC20"
+            ]
           },
           "asset": {
             "type": "string",
-            "enum": ["USDT", "USDC", "BTC"]
+            "enum": [
+              "USDT",
+              "USDC",
+              "BTC"
+            ]
           },
           "tokenContract": {
             "type": "string",
@@ -2849,7 +4376,11 @@
       },
       "CreditDepositRequest": {
         "type": "object",
-        "required": ["assetWalletId", "amount", "idempotencyKey"],
+        "required": [
+          "assetWalletId",
+          "amount",
+          "idempotencyKey"
+        ],
         "properties": {
           "assetWalletId": {
             "type": "string"
@@ -2893,7 +4424,7 @@
           },
           "amount": {
             "type": "number",
-            "minimum": 1e-8
+            "minimum": 1e-08
           },
           "feeAmount": {
             "type": "number",
@@ -2953,7 +4484,10 @@
       },
       "ApproveWithdrawalRequest": {
         "type": "object",
-        "required": ["withdrawalId", "approvedBy"],
+        "required": [
+          "withdrawalId",
+          "approvedBy"
+        ],
         "properties": {
           "withdrawalId": {
             "type": "string"
@@ -2965,7 +4499,9 @@
       },
       "WithdrawalProcessingRequest": {
         "type": "object",
-        "required": ["withdrawalId"],
+        "required": [
+          "withdrawalId"
+        ],
         "properties": {
           "withdrawalId": {
             "type": "string"
@@ -2974,7 +4510,10 @@
       },
       "WithdrawalSentRequest": {
         "type": "object",
-        "required": ["withdrawalId", "txHash"],
+        "required": [
+          "withdrawalId",
+          "txHash"
+        ],
         "properties": {
           "withdrawalId": {
             "type": "string"
@@ -2986,7 +4525,10 @@
       },
       "WithdrawalFailedRequest": {
         "type": "object",
-        "required": ["withdrawalId", "failureReason"],
+        "required": [
+          "withdrawalId",
+          "failureReason"
+        ],
         "properties": {
           "withdrawalId": {
             "type": "string"
@@ -3026,13 +4568,20 @@
           },
           "side": {
             "type": "string",
-            "enum": ["BUY", "SELL", "SWAP"]
+            "enum": [
+              "BUY",
+              "SELL",
+              "SWAP"
+            ]
           }
         }
       },
       "ExecuteTradeQuoteRequest": {
         "type": "object",
-        "required": ["quoteRef", "idempotencyKey"],
+        "required": [
+          "quoteRef",
+          "idempotencyKey"
+        ],
         "properties": {
           "quoteRef": {
             "type": "string"
@@ -3088,7 +4637,10 @@
           },
           "currency": {
             "type": "string",
-            "enum": ["GHS", "USD"]
+            "enum": [
+              "GHS",
+              "USD"
+            ]
           },
           "description": {
             "type": "string"
@@ -3099,7 +4651,11 @@
           },
           "rail": {
             "type": "string",
-            "enum": ["MOMO", "BANK", "CRYPTO"]
+            "enum": [
+              "MOMO",
+              "BANK",
+              "CRYPTO"
+            ]
           },
           "destination": {
             "oneOf": [
@@ -3118,7 +4674,13 @@
       },
       "DebitV2Request": {
         "type": "object",
-        "required": ["amount", "description", "callbackUrl", "rail", "source"],
+        "required": [
+          "amount",
+          "description",
+          "callbackUrl",
+          "rail",
+          "source"
+        ],
         "properties": {
           "externalTransactionId": {
             "type": "string"
@@ -3135,7 +4697,10 @@
           },
           "currency": {
             "type": "string",
-            "enum": ["GHS", "USD"]
+            "enum": [
+              "GHS",
+              "USD"
+            ]
           },
           "description": {
             "type": "string"
@@ -3146,7 +4711,12 @@
           },
           "rail": {
             "type": "string",
-            "enum": ["MOMO", "BANK", "CARD", "CRYPTO"]
+            "enum": [
+              "MOMO",
+              "BANK",
+              "CARD",
+              "CRYPTO"
+            ]
           },
           "source": {
             "oneOf": [
@@ -3203,11 +4773,20 @@
           },
           "rail": {
             "type": "string",
-            "enum": ["MOMO", "BANK", "CARD", "CRYPTO"]
+            "enum": [
+              "MOMO",
+              "BANK",
+              "CARD",
+              "CRYPTO"
+            ]
           },
           "destinationRail": {
             "type": "string",
-            "enum": ["MOMO", "BANK", "CRYPTO"]
+            "enum": [
+              "MOMO",
+              "BANK",
+              "CRYPTO"
+            ]
           },
           "source": {
             "oneOf": [
@@ -3242,11 +4821,18 @@
       },
       "MomoDestination": {
         "type": "object",
-        "required": ["type", "provider", "phoneNumber", "accountName"],
+        "required": [
+          "type",
+          "provider",
+          "phoneNumber",
+          "accountName"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["MOMO"]
+            "enum": [
+              "MOMO"
+            ]
           },
           "provider": {
             "type": "string"
@@ -3261,11 +4847,17 @@
       },
       "BankDestination": {
         "type": "object",
-        "required": ["type", "accountNumber", "accountName"],
+        "required": [
+          "type",
+          "accountNumber",
+          "accountName"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["BANK"]
+            "enum": [
+              "BANK"
+            ]
           },
           "bankCode": {
             "type": "string"
@@ -3287,11 +4879,18 @@
       },
       "CryptoDestination": {
         "type": "object",
-        "required": ["type", "network", "asset", "destinationAddress"],
+        "required": [
+          "type",
+          "network",
+          "asset",
+          "destinationAddress"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["CRYPTO"]
+            "enum": [
+              "CRYPTO"
+            ]
           },
           "network": {
             "type": "string"
@@ -3318,11 +4917,18 @@
       },
       "TransferCryptoDestination": {
         "type": "object",
-        "required": ["type", "network", "asset", "address"],
+        "required": [
+          "type",
+          "network",
+          "asset",
+          "address"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["CRYPTO"]
+            "enum": [
+              "CRYPTO"
+            ]
           },
           "network": {
             "type": "string"
@@ -3349,11 +4955,18 @@
       },
       "MomoSource": {
         "type": "object",
-        "required": ["type", "provider", "phoneNumber", "accountName"],
+        "required": [
+          "type",
+          "provider",
+          "phoneNumber",
+          "accountName"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["MOMO"]
+            "enum": [
+              "MOMO"
+            ]
           },
           "provider": {
             "type": "string"
@@ -3368,11 +4981,17 @@
       },
       "BankSource": {
         "type": "object",
-        "required": ["type", "accountNumber", "accountName"],
+        "required": [
+          "type",
+          "accountNumber",
+          "accountName"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["BANK"]
+            "enum": [
+              "BANK"
+            ]
           },
           "bankCode": {
             "type": "string"
@@ -3394,15 +5013,23 @@
       },
       "CardSource": {
         "type": "object",
-        "required": ["type", "mode"],
+        "required": [
+          "type",
+          "mode"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["CARD"]
+            "enum": [
+              "CARD"
+            ]
           },
           "mode": {
             "type": "string",
-            "enum": ["TOKEN", "RAW"]
+            "enum": [
+              "TOKEN",
+              "RAW"
+            ]
           },
           "tokenId": {
             "type": "string"
@@ -3423,7 +5050,11 @@
       },
       "RawCard": {
         "type": "object",
-        "required": ["number", "expiry", "cvc"],
+        "required": [
+          "number",
+          "expiry",
+          "cvc"
+        ],
         "properties": {
           "number": {
             "type": "string"
@@ -3441,11 +5072,18 @@
       },
       "CryptoSource": {
         "type": "object",
-        "required": ["type", "network", "asset", "walletAddress"],
+        "required": [
+          "type",
+          "network",
+          "asset",
+          "walletAddress"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["CRYPTO"]
+            "enum": [
+              "CRYPTO"
+            ]
           },
           "network": {
             "type": "string"
@@ -3577,7 +5215,10 @@
       },
       "WalletBalanceRequest": {
         "type": "object",
-        "required": ["currency", "walletType"],
+        "required": [
+          "currency",
+          "walletType"
+        ],
         "properties": {
           "currency": {
             "type": "string"
@@ -3589,7 +5230,10 @@
       },
       "DecryptPaymentDataRequest": {
         "type": "object",
-        "required": ["keyId", "encryptedPaymentData"],
+        "required": [
+          "keyId",
+          "encryptedPaymentData"
+        ],
         "properties": {
           "keyId": {
             "type": "string"
@@ -3668,7 +5312,10 @@
       },
       "CreateMerchantAppRequest": {
         "type": "object",
-        "required": ["name", "merchantId"],
+        "required": [
+          "name",
+          "merchantId"
+        ],
         "properties": {
           "name": {
             "type": "string"
@@ -3680,7 +5327,10 @@
       },
       "GenerateMerchantKeyRequest": {
         "type": "object",
-        "required": ["merchantId", "appId"],
+        "required": [
+          "merchantId",
+          "appId"
+        ],
         "properties": {
           "merchantId": {
             "type": "string"
@@ -3692,7 +5342,10 @@
       },
       "UpdateMerchantAppRequest": {
         "type": "object",
-        "required": ["id", "data"],
+        "required": [
+          "id",
+          "data"
+        ],
         "properties": {
           "id": {
             "type": "string"
@@ -3705,7 +5358,10 @@
       },
       "CreateVirtualAccountRequest": {
         "type": "object",
-        "required": ["customerId", "currency"],
+        "required": [
+          "customerId",
+          "currency"
+        ],
         "properties": {
           "customerId": {
             "type": "string"
@@ -3760,17 +5416,27 @@
           },
           "sourceNetwork": {
             "type": "string",
-            "enum": ["BEP20", "TRC20", "ERC20", "POLYGON", "SOLANA"]
+            "enum": [
+              "BEP20",
+              "TRC20",
+              "ERC20",
+              "POLYGON",
+              "SOLANA"
+            ]
           },
           "sourceAsset": {
             "type": "string",
-            "enum": ["USDT", "USDC"]
+            "enum": [
+              "USDT",
+              "USDC"
+            ]
           },
           "sourceAmount": {
             "oneOf": [
               {
                 "type": "number",
-                "exclusiveMinimum": 0
+                "exclusiveMinimum": true,
+                "minimum": 0
               },
               {
                 "type": "string",
@@ -3780,13 +5446,17 @@
           },
           "destinationCurrency": {
             "type": "string",
-            "enum": ["GHS", "NGN"]
+            "enum": [
+              "GHS",
+              "NGN"
+            ]
           },
           "destinationAmount": {
             "oneOf": [
               {
                 "type": "number",
-                "exclusiveMinimum": 0
+                "exclusiveMinimum": true,
+                "minimum": 0
               },
               {
                 "type": "string",
@@ -3798,7 +5468,8 @@
             "oneOf": [
               {
                 "type": "number",
-                "exclusiveMinimum": 0
+                "exclusiveMinimum": true,
+                "minimum": 0
               },
               {
                 "type": "string",
@@ -3826,7 +5497,12 @@
           },
           "quoteProvider": {
             "type": "string",
-            "enum": ["BANK_FX_ENGINE", "T24", "FLEXCUBE", "CUSTOM_BANK_API"],
+            "enum": [
+              "BANK_FX_ENGINE",
+              "T24",
+              "FLEXCUBE",
+              "CUSTOM_BANK_API"
+            ],
             "nullable": true
           },
           "recipient": {
@@ -3852,8 +5528,9 @@
           },
           "providerRate": {
             "type": "number",
-            "exclusiveMinimum": 0,
-            "nullable": true
+            "exclusiveMinimum": true,
+            "nullable": true,
+            "minimum": 0
           },
           "spread": {
             "type": "number",
@@ -3885,11 +5562,17 @@
       },
       "CryptoRemittanceRecipient": {
         "type": "object",
-        "required": ["type", "accountName"],
+        "required": [
+          "type",
+          "accountName"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["MOMO", "BANK"]
+            "enum": [
+              "MOMO",
+              "BANK"
+            ]
           },
           "provider": {
             "type": "string",
@@ -3923,7 +5606,10 @@
           },
           "serviceType": {
             "type": "string",
-            "enum": ["GIP", "NIP"],
+            "enum": [
+              "GIP",
+              "NIP"
+            ],
             "nullable": true
           }
         },
@@ -4047,7 +5733,10 @@
           },
           "sortOrder": {
             "type": "string",
-            "enum": ["asc", "desc"],
+            "enum": [
+              "asc",
+              "desc"
+            ],
             "default": "desc"
           }
         }
@@ -4180,7 +5869,9 @@
           },
           {
             "type": "object",
-            "required": ["name"],
+            "required": [
+              "name"
+            ],
             "properties": {
               "createdBy": {
                 "type": "string",
@@ -4197,7 +5888,9 @@
           "network": "TRC20",
           "amountGreaterThanOrEqual": 5000,
           "requiredApprovals": 2,
-          "approverRoles": ["finance_admin"],
+          "approverRoles": [
+            "finance_admin"
+          ],
           "priority": 10
         }
       },
@@ -4259,14 +5952,1372 @@
           },
           "sortBy": {
             "type": "string",
-            "enum": ["createdAt", "updatedAt", "priority", "name"],
+            "enum": [
+              "createdAt",
+              "updatedAt",
+              "priority",
+              "name"
+            ],
             "default": "createdAt"
           },
           "sortOrder": {
             "type": "string",
-            "enum": ["asc", "desc"],
+            "enum": [
+              "asc",
+              "desc"
+            ],
             "default": "desc"
           }
+        }
+      },
+      "CryptoRemittanceQuoteStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING",
+          "ACTIVE",
+          "EXPIRED",
+          "EXECUTED",
+          "CANCELLED",
+          "FAILED"
+        ]
+      },
+      "CreateCryptoRemittanceQuoteRequest": {
+        "type": "object",
+        "required": [
+          "sourceNetwork",
+          "sourceAsset",
+          "sourceAmount",
+          "destinationCurrency",
+          "recipient"
+        ],
+        "properties": {
+          "externalReference": {
+            "type": "string",
+            "maxLength": 120,
+            "nullable": true
+          },
+          "sourceNetwork": {
+            "type": "string",
+            "enum": [
+              "BEP20",
+              "TRC20",
+              "ERC20",
+              "POLYGON",
+              "SOLANA"
+            ]
+          },
+          "sourceAsset": {
+            "type": "string",
+            "enum": [
+              "USDT",
+              "USDC"
+            ]
+          },
+          "sourceAmount": {
+            "oneOf": [
+              {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              {
+                "type": "string",
+                "pattern": "^\\d+(\\.\\d+)?$"
+              }
+            ]
+          },
+          "destinationCurrency": {
+            "type": "string",
+            "enum": [
+              "GHS",
+              "NGN"
+            ]
+          },
+          "destinationAmount": {
+            "oneOf": [
+              {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              {
+                "type": "string",
+                "pattern": "^\\d+(\\.\\d+)?$"
+              }
+            ],
+            "nullable": true
+          },
+          "conversionRate": {
+            "oneOf": [
+              {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              {
+                "type": "string",
+                "pattern": "^\\d+(\\.\\d+)?$"
+              }
+            ],
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 255,
+            "nullable": true
+          },
+          "callbackUrl": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "quoteProvider": {
+            "type": "string",
+            "enum": [
+              "BANK_FX_ENGINE",
+              "T24",
+              "FLEXCUBE",
+              "CUSTOM_BANK_API"
+            ],
+            "nullable": true
+          },
+          "useExternalBankQuote": {
+            "type": "boolean",
+            "default": false
+          },
+          "recipient": {
+            "$ref": "#/components/schemas/CryptoRemittanceRecipient"
+          },
+          "sender": {
+            "$ref": "#/components/schemas/CryptoRemittanceSender"
+          },
+          "platformFee": {
+            "type": "number",
+            "minimum": 0,
+            "nullable": true
+          },
+          "networkFee": {
+            "type": "number",
+            "minimum": 0,
+            "nullable": true
+          },
+          "payoutFee": {
+            "type": "number",
+            "minimum": 0,
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          }
+        },
+        "example": {
+          "externalReference": "quote_001",
+          "sourceNetwork": "TRC20",
+          "sourceAsset": "USDT",
+          "sourceAmount": "100",
+          "destinationCurrency": "GHS",
+          "recipient": {
+            "type": "MOMO",
+            "provider": "MTN",
+            "phoneNumber": "0240000000",
+            "accountName": "John Doe"
+          },
+          "callbackUrl": "https://merchant.example.com/remittance/webhook"
+        }
+      },
+      "ExecuteCryptoRemittanceQuoteRequest": {
+        "type": "object",
+        "properties": {
+          "externalReference": {
+            "type": "string",
+            "maxLength": 120,
+            "nullable": true
+          },
+          "callbackUrl": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "sender": {
+            "$ref": "#/components/schemas/CryptoRemittanceSender"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          }
+        },
+        "example": {
+          "externalReference": "remit_001",
+          "callbackUrl": "https://merchant.example.com/remittance/webhook",
+          "metadata": {
+            "source": "merchant-dashboard"
+          }
+        }
+      },
+      "CryptoRemittanceQuoteResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GenericSuccessResponse"
+          }
+        ]
+      },
+      "DepositAsset": {
+        "type": "string",
+        "enum": [
+          "BTC",
+          "USDT",
+          "USDC"
+        ]
+      },
+      "DepositNetwork": {
+        "type": "string",
+        "enum": [
+          "BTC",
+          "TRC20",
+          "BEP20",
+          "SOLANA",
+          "ERC20",
+          "POLYGON"
+        ]
+      },
+      "DepositIntentStatus": {
+        "type": "string",
+        "enum": [
+          "ACTIVE",
+          "DISABLED",
+          "RETIRED",
+          "FAILED"
+        ]
+      },
+      "DepositEventStatus": {
+        "type": "string",
+        "enum": [
+          "SEEN",
+          "CONFIRMED",
+          "WEBHOOK_SENT",
+          "CREDITED"
+        ]
+      },
+      "CreateDepositIntentRequest": {
+        "type": "object",
+        "required": [
+          "merchantId",
+          "referenceId",
+          "asset",
+          "network"
+        ],
+        "properties": {
+          "merchantId": {
+            "type": "string",
+            "description": "Merchant ObjectId"
+          },
+          "referenceId": {
+            "type": "string",
+            "description": "Stable merchant-side reference for the deposit intent"
+          },
+          "asset": {
+            "$ref": "#/components/schemas/DepositAsset"
+          },
+          "network": {
+            "$ref": "#/components/schemas/DepositNetwork"
+          },
+          "minConfirmations": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 1
+          },
+          "callbackUrl": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "meta": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "example": {
+          "merchantId": "681111111111111111111111",
+          "referenceId": "customer_wallet_001",
+          "asset": "USDT",
+          "network": "TRC20",
+          "minConfirmations": 1,
+          "callbackUrl": "https://merchant.example.com/deposits/webhook",
+          "meta": {
+            "customerId": "cust_001"
+          }
+        }
+      },
+      "RetireDepositIntentRequest": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "retiredBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "meta": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "example": {
+          "reason": "Customer wallet closed",
+          "retiredBy": "merchant_admin"
+        }
+      },
+      "ExternalAddressDepositIntentRequest": {
+        "type": "object",
+        "required": [
+          "merchantId",
+          "referenceId",
+          "asset",
+          "network",
+          "address"
+        ],
+        "properties": {
+          "merchantId": {
+            "type": "string",
+            "description": "Merchant ObjectId"
+          },
+          "referenceId": {
+            "type": "string",
+            "description": "walletProfileId or stable address monitor reference"
+          },
+          "intentCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "asset": {
+            "$ref": "#/components/schemas/DepositAsset"
+          },
+          "network": {
+            "$ref": "#/components/schemas/DepositNetwork"
+          },
+          "address": {
+            "type": "string"
+          },
+          "minConfirmations": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 1
+          },
+          "callbackUrl": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "meta": {
+            "type": "object",
+            "additionalProperties": true,
+            "default": {}
+          }
+        },
+        "example": {
+          "merchantId": "681111111111111111111111",
+          "referenceId": "wallet_profile_001",
+          "asset": "USDT",
+          "network": "BEP20",
+          "address": "0x1111111111111111111111111111111111111111",
+          "minConfirmations": 1,
+          "callbackUrl": "https://merchant.example.com/deposit-events",
+          "meta": {
+            "purpose": "SMART_INVOICING_ADDRESS_MONITOR"
+          }
+        }
+      },
+      "DepositIntentResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GenericSuccessResponse"
+          }
+        ]
+      },
+      "ApiTokenOperation": {
+        "type": "string",
+        "description": "Operation permission to bind to the generated token. Defaults to DEBIT.",
+        "enum": [
+          "DEBIT",
+          "CREDIT",
+          "TRANSFER",
+          "DEPOSIT",
+          "WITHDRAWAL",
+          "SETTLEMENT",
+          "PAYOUT",
+          "REFUND",
+          "REVERSAL",
+          "FEE",
+          "ADJUSTMENT",
+          "HOLD",
+          "RELEASE",
+          "CONFIRM",
+          "UNCONFIRM"
+        ],
+        "default": "DEBIT"
+      },
+      "GenerateApiAccessTokenRequest": {
+        "type": "object",
+        "required": [
+          "apikey",
+          "merchantId"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "apikey": {
+            "type": "string",
+            "minLength": 32,
+            "maxLength": 64,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "API key. Must contain only alphanumeric characters, underscores, and hyphens."
+          },
+          "merchantId": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 32,
+            "pattern": "^[A-Za-z0-9-_]{8,32}$",
+            "description": "Merchant ID. Must be 8-32 characters long and contain only alphanumeric characters, hyphens, and underscores."
+          },
+          "operation": {
+            "$ref": "#/components/schemas/ApiTokenOperation"
+          }
+        },
+        "example": {
+          "apikey": "sk_test_1234567890abcdefghijklmnopqrstuvwxyz",
+          "merchantId": "merchant_123456",
+          "operation": "DEBIT"
+        }
+      },
+      "GenerateApiAccessTokenResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Token generated successfully"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "token": {
+                "type": "string",
+                "description": "Bearer JWT access token"
+              },
+              "expiresIn": {
+                "type": "string",
+                "example": "24h"
+              },
+              "operation": {
+                "$ref": "#/components/schemas/ApiTokenOperation"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "TokenBadRequestResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Bad Request"
+          },
+          "message": {
+            "type": "string",
+            "example": "API key is required"
+          },
+          "statusCode": {
+            "type": "integer",
+            "example": 400
+          }
+        }
+      },
+      "CustodyDepositRail": {
+        "type": "string",
+        "enum": [
+          "MOMO",
+          "BANK",
+          "CARD",
+          "CRYPTO"
+        ]
+      },
+      "CustodyDepositTarget": {
+        "type": "object",
+        "required": [
+          "network",
+          "asset"
+        ],
+        "properties": {
+          "network": {
+            "type": "string",
+            "enum": [
+              "FIAT",
+              "POLYGON",
+              "BEP20",
+              "TRC20",
+              "SOLANA",
+              "ERC20",
+              "BTC"
+            ],
+            "description": "For fiat deposits use FIAT. For crypto deposits use the crypto network."
+          },
+          "asset": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 20,
+            "description": "For fiat deposits this should match payload.currency. For crypto deposits it should match source.asset."
+          }
+        }
+      },
+      "CustodyMomoSource": {
+        "type": "object",
+        "required": [
+          "type",
+          "provider",
+          "phoneNumber"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "MOMO"
+            ]
+          },
+          "provider": {
+            "type": "string",
+            "description": "Mobile money provider, for example MTN, VODAFONE, AIRTELTIGO"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "accountName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": true
+      },
+      "CustodyBankSource": {
+        "type": "object",
+        "required": [
+          "type",
+          "accountNumber",
+          "issuer"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "BANK"
+            ]
+          },
+          "accountNumber": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 40
+          },
+          "accountName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120,
+            "nullable": true
+          },
+          "issuer": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 80,
+            "description": "Bank issuer slug or name. Joi schema lowercases this value."
+          },
+          "bankCode": {
+            "type": "string",
+            "maxLength": 40,
+            "nullable": true
+          }
+        }
+      },
+      "CustodyCardTokenSource": {
+        "type": "object",
+        "required": [
+          "type",
+          "mode",
+          "tokenId"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CARD"
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "TOKEN"
+            ]
+          },
+          "tokenId": {
+            "type": "string"
+          },
+          "issuer": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountName": {
+            "type": "string",
+            "nullable": true
+          },
+          "last4": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": true
+      },
+      "CustodyCardRawSource": {
+        "type": "object",
+        "required": [
+          "type",
+          "mode",
+          "card"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CARD"
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "RAW"
+            ]
+          },
+          "card": {
+            "type": "object",
+            "required": [
+              "number",
+              "expiry",
+              "cvc"
+            ],
+            "properties": {
+              "number": {
+                "type": "string"
+              },
+              "expiry": {
+                "type": "string"
+              },
+              "cvc": {
+                "type": "string"
+              },
+              "holderName": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "CustodyCryptoSource": {
+        "type": "object",
+        "required": [
+          "type",
+          "network",
+          "asset",
+          "walletAddress"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CRYPTO"
+            ]
+          },
+          "network": {
+            "type": "string",
+            "enum": [
+              "POLYGON",
+              "BEP20",
+              "TRC20",
+              "SOLANA",
+              "ERC20",
+              "BTC"
+            ]
+          },
+          "asset": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 20
+          },
+          "walletAddress": {
+            "type": "string"
+          },
+          "accountName": {
+            "type": "string",
+            "nullable": true
+          },
+          "memo": {
+            "type": "string",
+            "nullable": true
+          },
+          "tag": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": true
+      },
+      "CustomerCustodyDepositRequest": {
+        "type": "object",
+        "required": [
+          "merchantId",
+          "endCustomerId",
+          "amount",
+          "currency",
+          "description",
+          "callbackUrl",
+          "rail",
+          "target",
+          "source"
+        ],
+        "properties": {
+          "merchantId": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{24}$",
+            "description": "Merchant ObjectId"
+          },
+          "endCustomerId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "externalTransactionId": {
+            "type": "string",
+            "maxLength": 120,
+            "nullable": true
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "multipleOf": 1e-08,
+            "description": "Positive amount with up to 8 decimal places."
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3,
+            "description": "Three-letter currency code, for example GHS, NGN, USD."
+          },
+          "description": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 255
+          },
+          "callbackUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "rail": {
+            "$ref": "#/components/schemas/CustodyDepositRail"
+          },
+          "target": {
+            "$ref": "#/components/schemas/CustodyDepositTarget"
+          },
+          "source": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CustodyMomoSource"
+              },
+              {
+                "$ref": "#/components/schemas/CustodyBankSource"
+              },
+              {
+                "$ref": "#/components/schemas/CustodyCardTokenSource"
+              },
+              {
+                "$ref": "#/components/schemas/CustodyCardRawSource"
+              },
+              {
+                "$ref": "#/components/schemas/CustodyCryptoSource"
+              }
+            ],
+            "description": "Must match rail. For example rail=MOMO requires source.type=MOMO."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 200,
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": "Initiate fiat or crypto deposit into a customer custody wallet. Validation rules: source.type must match rail. For CRYPTO deposits, target.network/asset must match source.network/asset. For fiat deposits, target.network must be FIAT and target.asset must match payload.currency. NGN debit currently supports BANK only.",
+        "examples": {
+          "momoDeposit": {
+            "summary": "Fiat MOMO custody deposit",
+            "value": {
+              "merchantId": "681111111111111111111111",
+              "endCustomerId": "customer_001",
+              "externalTransactionId": "dep_001",
+              "amount": 100,
+              "currency": "GHS",
+              "description": "Fund customer GHS custody wallet",
+              "callbackUrl": "https://merchant.example.com/callback",
+              "rail": "MOMO",
+              "target": {
+                "network": "FIAT",
+                "asset": "GHS"
+              },
+              "source": {
+                "type": "MOMO",
+                "provider": "MTN",
+                "phoneNumber": "0240000000",
+                "accountName": "John Doe"
+              },
+              "idempotencyKey": "custody-dep-001"
+            }
+          },
+          "bankDeposit": {
+            "summary": "NGN bank custody deposit",
+            "value": {
+              "merchantId": "681111111111111111111111",
+              "endCustomerId": "customer_002",
+              "amount": 5000,
+              "currency": "NGN",
+              "description": "Fund customer NGN custody wallet",
+              "callbackUrl": "https://merchant.example.com/callback",
+              "rail": "BANK",
+              "target": {
+                "network": "FIAT",
+                "asset": "NGN"
+              },
+              "source": {
+                "type": "BANK",
+                "accountNumber": "0123456789",
+                "accountName": "John Doe",
+                "issuer": "gtbank",
+                "bankCode": "058"
+              },
+              "idempotencyKey": "custody-dep-ngn-001"
+            }
+          },
+          "cryptoDeposit": {
+            "summary": "Crypto custody deposit",
+            "value": {
+              "merchantId": "681111111111111111111111",
+              "endCustomerId": "customer_003",
+              "amount": 25,
+              "currency": "USDT",
+              "description": "Fund customer USDT custody wallet",
+              "callbackUrl": "https://merchant.example.com/callback",
+              "rail": "CRYPTO",
+              "target": {
+                "network": "TRC20",
+                "asset": "USDT"
+              },
+              "source": {
+                "type": "CRYPTO",
+                "network": "TRC20",
+                "asset": "USDT",
+                "walletAddress": "TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE"
+              },
+              "idempotencyKey": "custody-dep-usdt-001"
+            }
+          }
+        }
+      },
+      "StablecoinSymbol": {
+        "type": "string",
+        "enum": [
+          "DGHS"
+        ],
+        "default": "DGHS"
+      },
+      "StablecoinFiatCurrency": {
+        "type": "string",
+        "enum": [
+          "GHS"
+        ],
+        "default": "GHS"
+      },
+      "StablecoinMintStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING",
+          "FUNDS_CONFIRMED",
+          "APPROVAL_PENDING",
+          "APPROVED",
+          "MINTED",
+          "REJECTED",
+          "FAILED",
+          "CANCELLED"
+        ]
+      },
+      "StablecoinRedemptionStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING",
+          "APPROVAL_PENDING",
+          "APPROVED",
+          "BURNED",
+          "PAID",
+          "REJECTED",
+          "FAILED",
+          "CANCELLED"
+        ]
+      },
+      "CreateStablecoinMintRequest": {
+        "type": "object",
+        "required": [
+          "fiatAmount",
+          "destinationOwnerId",
+          "destinationOwnerType",
+          "destinationChainAddress",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "merchantId": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{24}$",
+            "nullable": true,
+            "default": null
+          },
+          "customerId": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{24}$",
+            "nullable": true,
+            "default": null
+          },
+          "asset": {
+            "$ref": "#/components/schemas/StablecoinSymbol"
+          },
+          "fiatCurrency": {
+            "$ref": "#/components/schemas/StablecoinFiatCurrency"
+          },
+          "fiatAmount": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "description": "Fiat amount paid into reserve."
+          },
+          "feeAmount": {
+            "type": "number",
+            "minimum": 0,
+            "default": 0,
+            "description": "Fee deducted from fiatAmount before minting. Must be less than fiatAmount."
+          },
+          "destinationOwnerId": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{24}$"
+          },
+          "destinationOwnerType": {
+            "type": "string",
+            "enum": [
+              "MERCHANT",
+              "CORPORATE",
+              "BANK",
+              "SYSTEM",
+              "CUSTOMER"
+            ],
+            "description": "DoronPay owner that will receive the stablecoin."
+          },
+          "destinationChainAddress": {
+            "type": "string",
+            "description": "Solana owner wallet address. This is not the SPL token account."
+          },
+          "chainNetwork": {
+            "type": "string",
+            "enum": [
+              "SOLANA"
+            ],
+            "default": "SOLANA"
+          },
+          "fundingReference": {
+            "type": "string",
+            "nullable": true,
+            "default": null,
+            "description": "Bank deposit/reference used to link reserve funding."
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "default": {}
+          }
+        },
+        "description": "Create bank-grade mint request and open maker-checker approval. feeAmount must be less than fiatAmount. Customer minting is disabled unless explicitly enabled by metadata or environment config.",
+        "example": {
+          "merchantId": "681111111111111111111111",
+          "asset": "DGHS",
+          "fiatCurrency": "GHS",
+          "fiatAmount": 100000,
+          "feeAmount": 100,
+          "destinationOwnerId": "682222222222222222222222",
+          "destinationOwnerType": "MERCHANT",
+          "destinationChainAddress": "9xQeWvG816bUx9EPfna11x5Dn2Huu2rGQhG4nDzF8abc",
+          "chainNetwork": "SOLANA",
+          "fundingReference": "BANK-DEP-001",
+          "idempotencyKey": "mint-001",
+          "metadata": {}
+        }
+      },
+      "ConfirmMintFundsRequest": {
+        "type": "object",
+        "required": [
+          "reserveAccountId",
+          "bankReference",
+          "confirmedBy"
+        ],
+        "properties": {
+          "reserveAccountId": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{24}$"
+          },
+          "bankReference": {
+            "type": "string"
+          },
+          "confirmedBy": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "default": {}
+          }
+        },
+        "example": {
+          "reserveAccountId": "683333333333333333333333",
+          "bankReference": "GHS-RESERVE-CREDIT-001",
+          "confirmedBy": "operations_checker",
+          "metadata": {}
+        }
+      },
+      "StablecoinApprovalNoteRequest": {
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string",
+            "nullable": true,
+            "default": null
+          }
+        }
+      },
+      "StablecoinApprovalRejectRequest": {
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateStablecoinTransferRequest": {
+        "type": "object",
+        "required": [
+          "amount",
+          "senderOwnerId",
+          "senderOwnerType",
+          "receiverOwnerId",
+          "receiverOwnerType",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "asset": {
+            "$ref": "#/components/schemas/StablecoinSymbol"
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "senderOwnerId": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{24}$"
+          },
+          "senderOwnerType": {
+            "type": "string",
+            "enum": [
+              "CUSTOMER",
+              "MERCHANT",
+              "BANK",
+              "SYSTEM"
+            ]
+          },
+          "receiverOwnerId": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{24}$"
+          },
+          "receiverOwnerType": {
+            "type": "string",
+            "enum": [
+              "CUSTOMER",
+              "MERCHANT",
+              "BANK",
+              "SYSTEM"
+            ]
+          },
+          "narration": {
+            "type": "string",
+            "nullable": true,
+            "default": null
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "default": {}
+          }
+        },
+        "example": {
+          "asset": "DGHS",
+          "amount": 2500,
+          "senderOwnerId": "681111111111111111111111",
+          "senderOwnerType": "MERCHANT",
+          "receiverOwnerId": "682222222222222222222222",
+          "receiverOwnerType": "BANK",
+          "narration": "Settlement transfer",
+          "idempotencyKey": "dghs-transfer-001",
+          "metadata": {}
+        }
+      },
+      "CreateStablecoinRedemptionRequest": {
+        "type": "object",
+        "required": [
+          "tokenAmount",
+          "sourceOwnerId",
+          "sourceOwnerType",
+          "payoutAccountType",
+          "payoutAccountNumber",
+          "payoutAccountName",
+          "payoutIssuer",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "merchantId": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{24}$",
+            "nullable": true
+          },
+          "customerId": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{24}$",
+            "nullable": true
+          },
+          "asset": {
+            "$ref": "#/components/schemas/StablecoinSymbol"
+          },
+          "tokenAmount": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "feeAmount": {
+            "type": "number",
+            "minimum": 0,
+            "default": 0
+          },
+          "sourceOwnerId": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{24}$"
+          },
+          "sourceOwnerType": {
+            "type": "string",
+            "enum": [
+              "CUSTOMER",
+              "MERCHANT",
+              "BANK",
+              "SYSTEM"
+            ]
+          },
+          "payoutAccountType": {
+            "type": "string",
+            "enum": [
+              "BANK",
+              "MOMO",
+              "WALLET"
+            ]
+          },
+          "payoutAccountNumber": {
+            "type": "string"
+          },
+          "payoutAccountName": {
+            "type": "string"
+          },
+          "payoutIssuer": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "default": {}
+          }
+        },
+        "example": {
+          "merchantId": "681111111111111111111111",
+          "asset": "DGHS",
+          "tokenAmount": 1000,
+          "feeAmount": 5,
+          "sourceOwnerId": "681111111111111111111111",
+          "sourceOwnerType": "MERCHANT",
+          "payoutAccountType": "BANK",
+          "payoutAccountNumber": "0123456789",
+          "payoutAccountName": "Merchant Ltd",
+          "payoutIssuer": "GIP",
+          "idempotencyKey": "redeem-001",
+          "metadata": {}
+        }
+      },
+      "ApproveStablecoinRedemptionRequest": {
+        "type": "object",
+        "required": [
+          "reserveAccountId",
+          "approvedBy"
+        ],
+        "properties": {
+          "reserveAccountId": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{24}$"
+          },
+          "approvedBy": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "default": {}
+          }
+        }
+      },
+      "MarkStablecoinRedemptionPaidRequest": {
+        "type": "object",
+        "required": [
+          "paidBy"
+        ],
+        "properties": {
+          "payoutTransactionId": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{24}$",
+            "nullable": true
+          },
+          "paidBy": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "default": {}
+          }
+        }
+      },
+      "CustodyTransferStatus": {
+        "type": "string",
+        "enum": [
+          "COMPLETED",
+          "FAILED",
+          "REVERSED"
+        ]
+      },
+      "CustomerCustodyTransferRequest": {
+        "type": "object",
+        "required": [
+          "merchantId",
+          "fromEndCustomerId",
+          "toEndCustomerId",
+          "network",
+          "asset",
+          "amount",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "merchantId": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{24}$"
+          },
+          "fromEndCustomerId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "toEndCustomerId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "network": {
+            "type": "string",
+            "enum": [
+              "FIAT",
+              "POLYGON",
+              "BEP20",
+              "TRC20",
+              "SOLANA",
+              "ERC20",
+              "BTC"
+            ]
+          },
+          "asset": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 20
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "clientReference": {
+            "type": "string",
+            "maxLength": 150,
+            "nullable": true
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 255,
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "example": {
+          "merchantId": "681111111111111111111111",
+          "fromEndCustomerId": "customer_001",
+          "toEndCustomerId": "customer_002",
+          "network": "TRC20",
+          "asset": "USDT",
+          "amount": 50,
+          "clientReference": "transfer_001",
+          "idempotencyKey": "custody-transfer-001",
+          "description": "Customer-to-customer transfer",
+          "metadata": {}
         }
       }
     }
