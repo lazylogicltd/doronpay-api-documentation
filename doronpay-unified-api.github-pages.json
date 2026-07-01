@@ -3,7 +3,7 @@
   "info": {
     "title": "DoronPay Unified API",
     "version": "2.0.0",
-    "description": "Swagger-ready unified API specification combining:\n- Customer Custody APIs\n- Spot Trading APIs\n- Cached Crypto Rates APIs\n- V2 Credit / Debit / Transfer transaction APIs\n- Supporting checkout, status, remittance, wallet, and merchant routes\n\nNotes:\n- Routes tagged as internal are typically intended for platform workflows, workers, or admin use.\n- Public routes are suitable for merchant-facing integrations.\n- Callback/webhook payloads are documented in the callbacks section and reusable schemas.\n- Most protected routes use the existing jwt-api strategy. Some public or utility routes are intentionally unauthenticated.\n\n- Customer on-ramp / off-ramp APIs\n- Tenant admin APIs for auth, branding, merchants, custody, trading, ramp, platform accounts, and reports\n",
+    "description": "Swagger-ready unified API specification combining:\n- Customer Custody APIs\n- Spot Trading APIs\n- Cached Crypto Rates APIs\n- V2 Credit / Debit / Transfer transaction APIs\n\nNotes:\n- Routes tagged as internal are typically intended for platform workflows, workers, or admin use.\n- Public routes are suitable for merchant-facing integrations.\n- Callback/webhook payloads are documented in the callbacks section and reusable schemas.\n- Most protected routes use the existing jwt-api strategy. Some public or utility routes are intentionally unauthenticated.\n\n- Customer on-ramp / off-ramp APIs\n- Merchant API routes for self-service profile, API apps, roles, custody, trading, ramp, platform accounts, and reports\n\nMerchant API authentication:\n- Partners first call POST /token under the /api/hub server base to generate a Bearer JWT access token.\n- Use the returned token as Authorization: Bearer <token> for protected merchant and hub endpoints.\n- Merchant self-service routes are available under /merchant/v1/*.",
     "contact": {
       "name": "API Support",
       "email": "info@lazylogiclimited.com"
@@ -23,6 +23,10 @@
     }
   ],
   "tags": [
+    {
+      "name": "Merchant API Authentication",
+      "description": "Generate merchant API access tokens using merchantId and API key before calling protected APIs."
+    },
     {
       "name": "Custody",
       "description": "Customer custody wallet and asset wallet operations"
@@ -72,10 +76,6 @@
       "description": "Merchant application and admin support endpoints"
     },
     {
-      "name": "Liquidity & Remittance",
-      "description": "Liquidity and remittance-related endpoints"
-    },
-    {
       "name": "Crypto Remittance",
       "description": "Merchant stablecoin-to-fiat remittance endpoints"
     },
@@ -98,10 +98,6 @@
     {
       "name": "Deposit Intents",
       "description": "Long-lived deposit intent, address monitoring, and deposit event endpoints"
-    },
-    {
-      "name": "Authentication",
-      "description": "API access token generation and authentication endpoints"
     },
     {
       "name": "Stablecoin Production",
@@ -132,36 +128,40 @@
       "description": "Customer on-ramp and off-ramp quote and execution operations"
     },
     {
-      "name": "Tenant Authentication",
-      "description": "Tenant admin login and current-user endpoints"
+      "name": "Merchant API",
+      "description": "Merchant-scoped self-service APIs. Merchant identity is resolved from the authenticated jwt-admin token."
     },
     {
-      "name": "Tenant Health & Branding",
-      "description": "Tenant health and public branding endpoints"
+      "name": "Merchant Profile",
+      "description": "Merchant profile and business configuration endpoints."
     },
     {
-      "name": "Tenant Merchants",
-      "description": "Tenant merchant, account, and balance-summary endpoints"
+      "name": "Merchant Users & Roles",
+      "description": "Merchant user, role, permission, and password management endpoints."
     },
     {
-      "name": "Tenant Trading",
-      "description": "Tenant spot trading, rate, quote, and execution endpoints"
+      "name": "Merchant API Apps",
+      "description": "Merchant API app, operation, callback, and API key management endpoints."
     },
     {
-      "name": "Tenant Ramp",
-      "description": "Tenant on-ramp and off-ramp administration endpoints"
+      "name": "Merchant Reports",
+      "description": "Merchant-scoped transaction, trade, ramp, custody, balance, and account reporting endpoints."
     },
     {
-      "name": "Tenant Custody",
-      "description": "Tenant custody wallet, address, deposit, and withdrawal endpoints"
+      "name": "Merchant Trading",
+      "description": "Merchant-scoped spot trading, rate, quote, and execution endpoints."
     },
     {
-      "name": "Tenant Platform Accounts",
-      "description": "Tenant platform account and platform ledger endpoints"
+      "name": "Merchant Ramp",
+      "description": "Merchant-scoped on-ramp and off-ramp quote and execution endpoints."
     },
     {
-      "name": "Tenant Reports",
-      "description": "Tenant report generation endpoints"
+      "name": "Merchant Custody",
+      "description": "Merchant-scoped custody wallets, asset wallets, addresses, deposits, and withdrawals endpoints."
+    },
+    {
+      "name": "Merchant Platform Accounts",
+      "description": "Merchant-scoped platform account and ledger endpoints."
     }
   ],
   "security": [
@@ -170,6 +170,89 @@
     }
   ],
   "paths": {
+    "/token": {
+      "post": {
+        "tags": ["Merchant API Authentication"],
+        "summary": "Generate merchant API access token",
+        "description": "Use this endpoint first to exchange a merchant API key for a Bearer JWT access token. Because the server base URL is /api/hub, the full production URL is https://doronpay.com/api/hub/token. Use the returned token in the Authorization header for protected merchant APIs.",
+        "operationId": "generateMerchantApiAccessToken",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateApiAccessTokenRequest"
+              },
+              "examples": {
+                "hanypayDebitToken": {
+                  "summary": "Generate HanyPay DEBIT token",
+                  "value": {
+                    "merchantId": "681111111111111111111111",
+                    "apikey": "00000000-0000-4000-8000-000000000000",
+                    "operation": "DEBIT"
+                  }
+                },
+                "hanypayCreditToken": {
+                  "summary": "Generate HanyPay CREDIT token",
+                  "value": {
+                    "merchantId": "681111111111111111111111",
+                    "apikey": "00000000-0000-4000-8000-000000000000",
+                    "operation": "CREDIT"
+                  }
+                },
+                "defaultToken": {
+                  "summary": "Generate token with default operation",
+                  "value": {
+                    "merchantId": "681111111111111111111111",
+                    "apikey": "00000000-0000-4000-8000-000000000000"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Access token generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateApiAccessTokenResponse"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Token generated",
+                    "value": {
+                      "success": true,
+                      "message": "Token generated successfully",
+                      "data": {
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                        "expiresIn": "24h",
+                        "operation": "DEBIT"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "curl",
+            "label": "cURL",
+            "source": "curl -X POST https://doronpay.com/api/hub/token \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"merchantId\":\"681111111111111111111111\",\"apikey\":\"00000000-0000-4000-8000-000000000000\",\"operation\":\"DEBIT\"}'"
+          }
+        ]
+      }
+    },
     "/admin/crypto-remittances": {
       "get": {
         "tags": ["Crypto Remittance Admin"],
@@ -450,40 +533,6 @@
         "responses": {
           "200": {
             "description": "Checkout status",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/collections/virtual-account": {
-      "post": {
-        "tags": ["Liquidity & Remittance"],
-        "summary": "Create MapleRad virtual account",
-        "operationId": "createVirtualAccount",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateVirtualAccountRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Virtual account created",
             "content": {
               "application/json": {
                 "schema": {
@@ -2933,6 +2982,2184 @@
         }
       }
     },
+    "/merchant/v1/api-apps": {
+      "get": {
+        "tags": ["Merchant API Apps"],
+        "summary": "List merchant API apps",
+        "operationId": "listMerchantApiApps",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Merchant API Apps"],
+        "summary": "Create merchant API app",
+        "operationId": "createMerchantApiApp",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMerchantApiAppRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/merchant/v1/api-apps/{appId}": {
+      "put": {
+        "tags": ["Merchant API Apps"],
+        "summary": "Update merchant API app",
+        "operationId": "updateMerchantApiApp",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "appId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            },
+            "description": "API app identifier"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMerchantApiAppRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/merchant/v1/api-apps/{appId}/regenerate-key": {
+      "put": {
+        "tags": ["Merchant API Apps"],
+        "summary": "Regenerate merchant API key",
+        "operationId": "regenerateMerchantApiKey",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "appId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            },
+            "description": "API app identifier"
+          }
+        ]
+      }
+    },
+    "/merchant/v1/custody/addresses": {
+      "get": {
+        "tags": ["Merchant Custody"],
+        "summary": "List merchant custody addresses",
+        "operationId": "listMerchantCustodyAddresses",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "endCustomerId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "network",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "asset",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
+        ]
+      }
+    },
+    "/merchant/v1/custody/addresses/{addressId}": {
+      "get": {
+        "tags": ["Merchant Custody"],
+        "summary": "Get merchant custody addresse by ID",
+        "operationId": "getMerchantCustodyAddresseById",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "addressId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            },
+            "description": "addressId identifier"
+          }
+        ]
+      }
+    },
+    "/merchant/v1/custody/asset-wallets": {
+      "get": {
+        "tags": ["Merchant Custody"],
+        "summary": "List merchant custody asset wallets",
+        "operationId": "listMerchantCustodyAssetWallets",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "endCustomerId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "network",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "asset",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
+        ]
+      }
+    },
+    "/merchant/v1/custody/asset-wallets/{assetWalletId}": {
+      "get": {
+        "tags": ["Merchant Custody"],
+        "summary": "Get merchant custody asset wallet by ID",
+        "operationId": "getMerchantCustodyAssetWalletById",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assetWalletId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            },
+            "description": "assetWalletId identifier"
+          }
+        ]
+      }
+    },
+    "/merchant/v1/custody/deposits": {
+      "get": {
+        "tags": ["Merchant Custody"],
+        "summary": "List merchant custody deposits",
+        "operationId": "listMerchantCustodyDeposits",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "endCustomerId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "network",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "asset",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
+        ]
+      }
+    },
+    "/merchant/v1/custody/deposits/{depositId}": {
+      "get": {
+        "tags": ["Merchant Custody"],
+        "summary": "Get merchant custody deposit by ID",
+        "operationId": "getMerchantCustodyDepositById",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "depositId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            },
+            "description": "depositId identifier"
+          }
+        ]
+      }
+    },
+    "/merchant/v1/custody/wallets": {
+      "get": {
+        "tags": ["Merchant Custody"],
+        "summary": "List merchant custody wallets",
+        "operationId": "listMerchantCustodyWallets",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "endCustomerId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "network",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "asset",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
+        ]
+      }
+    },
+    "/merchant/v1/custody/wallets/{walletId}": {
+      "get": {
+        "tags": ["Merchant Custody"],
+        "summary": "Get merchant custody wallet by ID",
+        "operationId": "getMerchantCustodyWalletById",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "walletId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            },
+            "description": "walletId identifier"
+          }
+        ]
+      }
+    },
+    "/merchant/v1/custody/withdrawals": {
+      "get": {
+        "tags": ["Merchant Custody"],
+        "summary": "List merchant custody withdrawals",
+        "operationId": "listMerchantCustodyWithdrawals",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "endCustomerId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "network",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "asset",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
+        ]
+      }
+    },
+    "/merchant/v1/custody/withdrawals/{withdrawalId}": {
+      "get": {
+        "tags": ["Merchant Custody"],
+        "summary": "Get merchant custody withdrawal by ID",
+        "operationId": "getMerchantCustodyWithdrawalById",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "withdrawalId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            },
+            "description": "withdrawalId identifier"
+          }
+        ]
+      }
+    },
+    "/merchant/v1/me": {
+      "get": {
+        "tags": ["Merchant API"],
+        "summary": "Get current merchant authenticated user",
+        "operationId": "getCurrentMerchantApiUser",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/merchant/v1/platform-account-ledgers": {
+      "get": {
+        "tags": ["Merchant Platform Accounts"],
+        "summary": "List merchant platform account ledgers",
+        "operationId": "listMerchantPlatformAccountLedgers",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "accountId",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            }
+          },
+          {
+            "in": "query",
+            "name": "direction",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
+        ]
+      }
+    },
+    "/merchant/v1/platform-account-ledgers/{id}": {
+      "get": {
+        "tags": ["Merchant Platform Accounts"],
+        "summary": "Get merchant platform account ledger by ID",
+        "operationId": "getMerchantPlatformAccountLedgerById",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            },
+            "description": "Platform account ledger identifier"
+          }
+        ]
+      }
+    },
+    "/merchant/v1/platform-accounts": {
+      "get": {
+        "tags": ["Merchant Platform Accounts"],
+        "summary": "List merchant platform accounts",
+        "operationId": "listMerchantPlatformAccounts",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "walletType",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "currency",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "active",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
+        ]
+      }
+    },
+    "/merchant/v1/platform-accounts/{id}": {
+      "get": {
+        "tags": ["Merchant Platform Accounts"],
+        "summary": "Get merchant platform account by ID",
+        "operationId": "getMerchantPlatformAccountById",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            },
+            "description": "Platform account identifier"
+          }
+        ]
+      }
+    },
+    "/merchant/v1/profile": {
+      "get": {
+        "tags": ["Merchant Profile"],
+        "summary": "Get authenticated merchant profile",
+        "operationId": "getAuthenticatedMerchantProfile",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["Merchant Profile"],
+        "summary": "Update authenticated merchant profile",
+        "operationId": "updateAuthenticatedMerchantProfile",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MerchantProfileUpdateRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/merchant/v1/ramp/execute": {
+      "post": {
+        "tags": ["Merchant Ramp"],
+        "summary": "Execute merchant on-ramp or off-ramp quote",
+        "operationId": "executeMerchantRampQuote",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExecuteRampQuoteRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/merchant/v1/ramp/executions": {
+      "get": {
+        "tags": ["Merchant Ramp"],
+        "summary": "List merchant ramp executions",
+        "operationId": "listMerchantRampExecutions",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "direction",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "endCustomerId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "assetWalletId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        ]
+      }
+    },
+    "/merchant/v1/ramp/executions/{executionRef}": {
+      "get": {
+        "tags": ["Merchant Ramp"],
+        "summary": "Get merchant ramp execution by reference",
+        "operationId": "getMerchantRampExecutionByRef",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "executionRef",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "description": "executionRef"
+          }
+        ]
+      }
+    },
+    "/merchant/v1/ramp/executions/{executionRef}/complete-settlement": {
+      "post": {
+        "tags": ["Merchant Ramp"],
+        "summary": "Mark merchant external ramp settlement as completed",
+        "operationId": "completeMerchantRampExternalSettlement",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "executionRef",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "description": "executionRef"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteMerchantRampSettlementRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/merchant/v1/ramp/quote": {
+      "post": {
+        "tags": ["Merchant Ramp"],
+        "summary": "Create merchant on-ramp or off-ramp quote",
+        "operationId": "createMerchantRampQuote",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMerchantRampQuoteRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/merchant/v1/ramp/quotes": {
+      "get": {
+        "tags": ["Merchant Ramp"],
+        "summary": "List merchant ramp quotes",
+        "operationId": "listMerchantRampQuotes",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "direction",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "endCustomerId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        ]
+      }
+    },
+    "/merchant/v1/ramp/quotes/{quoteRef}": {
+      "get": {
+        "tags": ["Merchant Ramp"],
+        "summary": "Get merchant ramp quote by reference",
+        "operationId": "getMerchantRampQuoteByRef",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quoteRef",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "description": "quoteRef"
+          }
+        ]
+      }
+    },
+    "/merchant/v1/reports/transactions": {
+      "post": {
+        "tags": ["Merchant Reports"],
+        "summary": "Generate authenticated merchant transaction report",
+        "operationId": "generateMerchantTransactionReport",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MerchantTransactionReportRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/merchant/v1/roles": {
+      "get": {
+        "tags": ["Merchant Users & Roles"],
+        "summary": "List merchant users and roles",
+        "operationId": "listMerchantRoles",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Merchant Users & Roles"],
+        "summary": "Create merchant user or role",
+        "operationId": "createMerchantRole",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMerchantRoleRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/merchant/v1/roles/{roleId}": {
+      "put": {
+        "tags": ["Merchant Users & Roles"],
+        "summary": "Update merchant user or role",
+        "operationId": "updateMerchantRole",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roleId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            },
+            "description": "Merchant role identifier"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMerchantRoleRequest"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Merchant Users & Roles"],
+        "summary": "Delete merchant user or role",
+        "operationId": "deleteMerchantRole",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roleId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            },
+            "description": "Merchant role identifier"
+          }
+        ]
+      }
+    },
+    "/merchant/v1/roles/{roleId}/password": {
+      "put": {
+        "tags": ["Merchant Users & Roles"],
+        "summary": "Update merchant user password",
+        "operationId": "updateMerchantRolePassword",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "roleId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            },
+            "description": "Merchant role identifier"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMerchantRolePasswordRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/merchant/v1/trading/executions": {
+      "get": {
+        "tags": ["Merchant Trading"],
+        "summary": "List merchant trade executions",
+        "operationId": "listMerchantTradeExecutions",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "endCustomerId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "assetWalletId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        ]
+      }
+    },
+    "/merchant/v1/trading/executions/{executionId}": {
+      "get": {
+        "tags": ["Merchant Trading"],
+        "summary": "Get merchant trade execution by ID",
+        "operationId": "getMerchantTradeExecutionById",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "executionId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            },
+            "description": "executionId identifier"
+          }
+        ]
+      }
+    },
+    "/merchant/v1/trading/pairs": {
+      "get": {
+        "tags": ["Merchant Trading"],
+        "summary": "List merchant trading pairs",
+        "operationId": "listMerchantTradingPairs",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "baseAsset",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "quoteAsset",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        ]
+      }
+    },
+    "/merchant/v1/trading/pairs/{pairId}": {
+      "get": {
+        "tags": ["Merchant Trading"],
+        "summary": "Get merchant trading pair by ID",
+        "operationId": "getMerchantTradingPairById",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pairId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            },
+            "description": "pairId identifier"
+          }
+        ]
+      }
+    },
+    "/merchant/v1/trading/quotes": {
+      "get": {
+        "tags": ["Merchant Trading"],
+        "summary": "List merchant trade quotes",
+        "operationId": "listMerchantTradeQuotes",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "endCustomerId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pairCode",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        ]
+      }
+    },
+    "/merchant/v1/trading/quotes/{quoteId}": {
+      "get": {
+        "tags": ["Merchant Trading"],
+        "summary": "Get merchant trade quote by ID",
+        "operationId": "getMerchantTradeQuoteById",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quoteId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{24}$"
+            },
+            "description": "quoteId identifier"
+          }
+        ]
+      }
+    },
+    "/merchant/v1/trading/rates/crypto": {
+      "get": {
+        "tags": ["Merchant Trading"],
+        "summary": "List merchant cached crypto rates",
+        "operationId": "listMerchantCryptoRates",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pairCode",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "baseAsset",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "quoteAsset",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        ]
+      }
+    },
+    "/merchant/v1/trading/rates/crypto/{pairCode}": {
+      "get": {
+        "tags": ["Merchant Trading"],
+        "summary": "Get merchant crypto rate by pair code",
+        "operationId": "getMerchantCryptoRateByPairCode",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pairCode",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "description": "Trading pair code"
+          }
+        ]
+      }
+    },
     "/new": {
       "post": {
         "tags": ["Merchant Apps"],
@@ -3633,68 +5860,6 @@
         }
       }
     },
-    "/remittance/institutions": {
-      "get": {
-        "tags": ["Liquidity & Remittance"],
-        "summary": "Fetch MapleRad institutions by country",
-        "operationId": "getRemittanceInstitutions",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "country",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Institutions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/remittance/verify/{id}": {
-      "get": {
-        "tags": ["Liquidity & Remittance"],
-        "summary": "Verify remittance transaction by id",
-        "operationId": "verifyRemittanceTransaction",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/IdPath"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Remittance verification result",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/status/{id}": {
       "get": {
         "tags": ["Transactions"],
@@ -3717,3021 +5882,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/system/liquidity-status": {
-      "get": {
-        "tags": ["Liquidity & Remittance"],
-        "summary": "Get USDT and BTC liquidity status per chain",
-        "operationId": "getLiquidityStatus",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Liquidity status",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/tenant/v1/auth/login": {
-      "post": {
-        "tags": ["Tenant Authentication"],
-        "summary": "Tenant admin login",
-        "operationId": "tenantAdminLogin",
-        "security": [],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TenantLoginRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Tenant login successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          }
-        }
-      }
-    },
-    "/tenant/v1/auth/me": {
-      "get": {
-        "tags": ["Tenant Authentication"],
-        "summary": "Get current tenant admin profile",
-        "operationId": "getTenantAdminMe",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Current tenant admin",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/branding": {
-      "get": {
-        "tags": ["Tenant Health & Branding"],
-        "summary": "Get tenant branding",
-        "operationId": "getTenantBranding",
-        "security": [],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant branding",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          }
-        }
-      }
-    },
-    "/tenant/v1/custody/addresses": {
-      "get": {
-        "tags": ["Tenant Custody"],
-        "summary": "List tenant custody addresses",
-        "operationId": "listTenantCustodyAddresses",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "query",
-            "name": "merchantId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            },
-            "description": "Merchant identifier"
-          },
-          {
-            "in": "query",
-            "name": "endCustomerId",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "custodyWalletId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          },
-          {
-            "in": "query",
-            "name": "assetWalletId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          },
-          {
-            "in": "query",
-            "name": "network",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "asset",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "isActive",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "in": "query",
-            "name": "role",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "hasBalance",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "in": "query",
-            "name": "state",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "search",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "page",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 200
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant custody addresses",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/custody/addresses/{addressId}": {
-      "get": {
-        "tags": ["Tenant Custody"],
-        "summary": "Get tenant custody address by ID",
-        "operationId": "getTenantCustodyAddressById",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "addressId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant custody address",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/custody/asset-wallets": {
-      "get": {
-        "tags": ["Tenant Custody"],
-        "summary": "List tenant custody asset wallets",
-        "operationId": "listTenantCustodyAssetWallets",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "query",
-            "name": "merchantId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            },
-            "description": "Merchant identifier"
-          },
-          {
-            "in": "query",
-            "name": "endCustomerId",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "custodyWalletId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          },
-          {
-            "in": "query",
-            "name": "network",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "asset",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "search",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "page",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 200
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant custody asset wallets",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/custody/asset-wallets/{assetWalletId}": {
-      "get": {
-        "tags": ["Tenant Custody"],
-        "summary": "Get tenant custody asset wallet by ID",
-        "operationId": "getTenantCustodyAssetWalletById",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "assetWalletId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant custody asset wallet",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/custody/deposits": {
-      "get": {
-        "tags": ["Tenant Custody"],
-        "summary": "List tenant custody deposits",
-        "operationId": "listTenantCustodyDeposits",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "query",
-            "name": "merchantId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            },
-            "description": "Merchant identifier"
-          },
-          {
-            "in": "query",
-            "name": "custodyWalletId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          },
-          {
-            "in": "query",
-            "name": "assetWalletId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          },
-          {
-            "in": "query",
-            "name": "custodyAddressId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          },
-          {
-            "in": "query",
-            "name": "endCustomerId",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "network",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "asset",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "txHash",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "depositIntentId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          },
-          {
-            "in": "query",
-            "name": "fromDate",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "in": "query",
-            "name": "toDate",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "in": "query",
-            "name": "page",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "default": 1
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 200,
-              "default": 20
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant custody deposits",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/custody/deposits/{depositId}": {
-      "get": {
-        "tags": ["Tenant Custody"],
-        "summary": "Get tenant custody deposit by ID",
-        "operationId": "getTenantCustodyDepositById",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "depositId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant custody deposit",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/custody/wallets": {
-      "get": {
-        "tags": ["Tenant Custody"],
-        "summary": "List tenant custody wallets",
-        "operationId": "listTenantCustodyWallets",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "query",
-            "name": "merchantId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            },
-            "description": "Merchant identifier"
-          },
-          {
-            "in": "query",
-            "name": "endCustomerId",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "custodyMode",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "search",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "page",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 200
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant custody wallets",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/custody/wallets/{walletId}": {
-      "get": {
-        "tags": ["Tenant Custody"],
-        "summary": "Get tenant custody wallet by ID",
-        "operationId": "getTenantCustodyWalletById",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "walletId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant custody wallet",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/custody/withdrawals": {
-      "get": {
-        "tags": ["Tenant Custody"],
-        "summary": "List tenant custody withdrawals",
-        "operationId": "listTenantCustodyWithdrawals",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "query",
-            "name": "merchantId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            },
-            "description": "Merchant identifier"
-          },
-          {
-            "in": "query",
-            "name": "endCustomerId",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "assetWalletId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          },
-          {
-            "in": "query",
-            "name": "network",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "asset",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "destinationAddress",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "fromDate",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "in": "query",
-            "name": "toDate",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "in": "query",
-            "name": "page",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 200
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant custody withdrawals",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/custody/withdrawals/{withdrawalId}": {
-      "get": {
-        "tags": ["Tenant Custody"],
-        "summary": "Get tenant custody withdrawal by ID",
-        "operationId": "getTenantCustodyWithdrawalById",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "withdrawalId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant custody withdrawal",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/health": {
-      "get": {
-        "tags": ["Tenant Health & Branding"],
-        "summary": "Tenant API health check",
-        "operationId": "tenantHealth",
-        "security": [],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant API health",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          }
-        }
-      }
-    },
-    "/tenant/v1/merchants": {
-      "get": {
-        "tags": ["Tenant Merchants"],
-        "summary": "List tenant merchants",
-        "operationId": "listTenantMerchants",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "query",
-            "name": "merchantId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            },
-            "description": "Merchant identifier"
-          },
-          {
-            "in": "query",
-            "name": "search",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "page",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 200
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant merchants",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/merchants/{merchantId}": {
-      "get": {
-        "tags": ["Tenant Merchants"],
-        "summary": "Get tenant merchant by ID",
-        "operationId": "getTenantMerchantById",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "merchantId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant merchant",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/merchants/{merchantId}/accounts": {
-      "get": {
-        "tags": ["Tenant Merchants"],
-        "summary": "List tenant merchant accounts",
-        "operationId": "listTenantMerchantAccounts",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "merchantId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          },
-          {
-            "in": "query",
-            "name": "currency",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "walletType",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant merchant accounts",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/merchants/{merchantId}/balance-summary": {
-      "get": {
-        "tags": ["Tenant Merchants"],
-        "summary": "Get tenant merchant balance summary",
-        "operationId": "getTenantMerchantBalanceSummary",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "merchantId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant merchant balance summary",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/platform-account-ledgers": {
-      "get": {
-        "tags": ["Tenant Platform Accounts"],
-        "summary": "List tenant platform account ledgers",
-        "operationId": "listTenantPlatformAccountLedgers",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "query",
-            "name": "platformAccountId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          },
-          {
-            "in": "query",
-            "name": "accountCode",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "accountCategory",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "entryType",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "direction",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "currency",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "minLength": 3,
-              "maxLength": 12
-            }
-          },
-          {
-            "in": "query",
-            "name": "transactionId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          },
-          {
-            "in": "query",
-            "name": "merchantId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            },
-            "description": "Merchant identifier"
-          },
-          {
-            "in": "query",
-            "name": "reference",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "maxLength": 120
-            }
-          },
-          {
-            "in": "query",
-            "name": "fromDate",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "in": "query",
-            "name": "toDate",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "in": "query",
-            "name": "page",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "default": 1
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 20
-            }
-          },
-          {
-            "in": "query",
-            "name": "sortBy",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["createdAt", "amount", "balanceBefore", "balanceAfter"],
-              "default": "createdAt"
-            }
-          },
-          {
-            "in": "query",
-            "name": "sortOrder",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["asc", "desc"],
-              "default": "desc"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant platform account ledgers",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/platform-account-ledgers/{id}": {
-      "get": {
-        "tags": ["Tenant Platform Accounts"],
-        "summary": "Get tenant platform account ledger by ID",
-        "operationId": "getTenantPlatformAccountLedgerById",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant platform account ledger",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/platform-accounts": {
-      "get": {
-        "tags": ["Tenant Platform Accounts"],
-        "summary": "List tenant platform accounts",
-        "operationId": "listTenantPlatformAccounts",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "query",
-            "name": "code",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "category",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "currency",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "minLength": 3,
-              "maxLength": 12
-            }
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "page",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "default": 1
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 20
-            }
-          },
-          {
-            "in": "query",
-            "name": "sortBy",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["createdAt", "updatedAt", "balance", "code", "currency"],
-              "default": "createdAt"
-            }
-          },
-          {
-            "in": "query",
-            "name": "sortOrder",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["asc", "desc"],
-              "default": "desc"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant platform accounts",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/platform-accounts/{id}": {
-      "get": {
-        "tags": ["Tenant Platform Accounts"],
-        "summary": "Get tenant platform account by ID",
-        "operationId": "getTenantPlatformAccountById",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant platform account",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/ramp/execute": {
-      "post": {
-        "tags": ["Tenant Ramp"],
-        "summary": "Execute a tenant on-ramp or off-ramp quote",
-        "operationId": "executeTenantRampQuote",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ExecuteRampQuoteRequest"
-              },
-              "examples": {
-                "executeOnRamp": {
-                  "summary": "Execute ON_RAMP after fiat payment confirmation",
-                  "value": {
-                    "quoteRef": "RAMPQ-20260630-0001",
-                    "idempotencyKey": "ramp-exec-001",
-                    "paymentConfirmed": true,
-                    "paymentReference": "MOMO-REF-001",
-                    "performedBy": "merchant-admin"
-                  }
-                },
-                "executeOffRamp": {
-                  "summary": "Execute OFF_RAMP from custody wallet",
-                  "value": {
-                    "quoteRef": "RAMPQ-20260630-0002",
-                    "idempotencyKey": "ramp-exec-002",
-                    "performedBy": "merchant-admin"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Tenant ramp quote executed",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/ramp/executions": {
-      "get": {
-        "tags": ["Tenant Ramp"],
-        "summary": "List tenant ramp executions",
-        "operationId": "listTenantRampExecutions",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "query",
-            "name": "merchantId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            },
-            "description": "Merchant identifier"
-          },
-          {
-            "in": "query",
-            "name": "direction",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/RampDirection"
-            }
-          },
-          {
-            "in": "query",
-            "name": "endCustomerId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 120
-            }
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "assetWalletId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 200
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant ramp execution list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/ramp/executions/{executionRef}": {
-      "get": {
-        "tags": ["Tenant Ramp"],
-        "summary": "Get tenant ramp execution by reference",
-        "operationId": "getTenantRampExecutionByRef",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "executionRef",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 3,
-              "maxLength": 120
-            }
-          },
-          {
-            "in": "query",
-            "name": "merchantId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            },
-            "description": "Merchant identifier"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant ramp execution",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/ramp/executions/{executionRef}/complete-settlement": {
-      "post": {
-        "tags": ["Tenant Ramp"],
-        "summary": "Mark tenant external ramp settlement as completed",
-        "operationId": "completeTenantRampExternalSettlement",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "executionRef",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 3,
-              "maxLength": 120
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CompleteTenantRampSettlementRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Tenant ramp settlement completed",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/ramp/quote": {
-      "post": {
-        "tags": ["Tenant Ramp"],
-        "summary": "Create a tenant on-ramp or off-ramp quote",
-        "operationId": "createTenantRampQuote",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateTenantRampQuoteRequest"
-              },
-              "examples": {
-                "onRampToCustody": {
-                  "summary": "ON_RAMP to customer custody wallet",
-                  "value": {
-                    "merchantId": "681111111111111111111111",
-                    "appId": "682222222222222222222222",
-                    "direction": "ON_RAMP",
-                    "endCustomerId": "customer_001",
-                    "fiatCurrency": "GHS",
-                    "cryptoAsset": "USDT",
-                    "network": "TRC20",
-                    "sourceAmount": 100,
-                    "destinationAssetWalletId": "683333333333333333333333",
-                    "settlementMode": "CUSTOMER_CUSTODY_WALLET",
-                    "fiatPaymentMethod": "MOMO",
-                    "fiatProvider": "MTN",
-                    "collectionDetails": {
-                      "phoneNumber": "0240000000"
-                    },
-                    "quoteIdempotencyKey": "ramp-quote-001"
-                  }
-                },
-                "offRampToFiatPayout": {
-                  "summary": "OFF_RAMP from custody wallet to fiat payout",
-                  "value": {
-                    "merchantId": "681111111111111111111111",
-                    "direction": "OFF_RAMP",
-                    "endCustomerId": "customer_001",
-                    "fiatCurrency": "GHS",
-                    "cryptoAsset": "USDT",
-                    "network": "TRC20",
-                    "sourceAmount": 10,
-                    "sourceAssetWalletId": "683333333333333333333333",
-                    "settlementMode": "FIAT_PAYOUT",
-                    "fiatPayoutDetails": {
-                      "rail": "MOMO",
-                      "provider": "MTN",
-                      "phoneNumber": "0240000000",
-                      "accountName": "John Doe"
-                    },
-                    "quoteIdempotencyKey": "ramp-quote-002"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Tenant ramp quote created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/ramp/quotes": {
-      "get": {
-        "tags": ["Tenant Ramp"],
-        "summary": "List tenant ramp quotes",
-        "operationId": "listTenantRampQuotes",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "query",
-            "name": "merchantId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            },
-            "description": "Merchant identifier"
-          },
-          {
-            "in": "query",
-            "name": "direction",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/RampDirection"
-            }
-          },
-          {
-            "in": "query",
-            "name": "endCustomerId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 120
-            }
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "required": false,
-            "schema": {
-              "$ref": "#/components/schemas/RampQuoteStatus"
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 200
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant ramp quote list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/ramp/quotes/{quoteRef}": {
-      "get": {
-        "tags": ["Tenant Ramp"],
-        "summary": "Get tenant ramp quote by reference",
-        "operationId": "getTenantRampQuoteByRef",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "quoteRef",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 3,
-              "maxLength": 120
-            }
-          },
-          {
-            "in": "query",
-            "name": "merchantId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            },
-            "description": "Merchant identifier"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant ramp quote",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/reports/transactions": {
-      "post": {
-        "tags": ["Tenant Reports"],
-        "summary": "Generate tenant transaction report",
-        "operationId": "generateTenantTransactionReport",
-        "description": "Generates a transaction report. Date range must be valid and cannot exceed 90 days.",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TenantTransactionReportRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Tenant transaction report",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/trading/executions": {
-      "get": {
-        "tags": ["Tenant Trading"],
-        "summary": "List tenant trade executions",
-        "operationId": "listTenantTradeExecutions",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "query",
-            "name": "merchantId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            },
-            "description": "Merchant identifier"
-          },
-          {
-            "in": "query",
-            "name": "endCustomerId",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "pairCode",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "quoteRef",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "executionRef",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "fromDate",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "in": "query",
-            "name": "toDate",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "in": "query",
-            "name": "page",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 200
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant trade executions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/trading/executions/{executionId}": {
-      "get": {
-        "tags": ["Tenant Trading"],
-        "summary": "Get tenant trade execution by ID",
-        "operationId": "getTenantTradeExecutionById",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "executionId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant trade execution",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/trading/pairs": {
-      "get": {
-        "tags": ["Tenant Trading"],
-        "summary": "List tenant trading pairs",
-        "operationId": "listTenantTradingPairs",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "query",
-            "name": "baseAsset",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "quoteAsset",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "pricingSource",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "page",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 200
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant trading pairs",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/trading/pairs/{pairId}": {
-      "get": {
-        "tags": ["Tenant Trading"],
-        "summary": "Get tenant trading pair by ID",
-        "operationId": "getTenantTradingPairById",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "pairId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant trading pair",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/trading/quotes": {
-      "get": {
-        "tags": ["Tenant Trading"],
-        "summary": "List tenant trade quotes",
-        "operationId": "listTenantTradeQuotes",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "query",
-            "name": "merchantId",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            },
-            "description": "Merchant identifier"
-          },
-          {
-            "in": "query",
-            "name": "endCustomerId",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "pairCode",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "side",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["BUY", "SELL", "SWAP"]
-            }
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "fromDate",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "in": "query",
-            "name": "toDate",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "in": "query",
-            "name": "page",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 200
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant trade quotes",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/trading/quotes/{quoteId}": {
-      "get": {
-        "tags": ["Tenant Trading"],
-        "summary": "Get tenant trade quote by ID",
-        "operationId": "getTenantTradeQuoteById",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "quoteId",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[a-fA-F0-9]{24}$"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant trade quote",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/trading/rates/crypto": {
-      "get": {
-        "tags": ["Tenant Trading"],
-        "summary": "List tenant cached crypto rates",
-        "operationId": "listTenantCryptoRates",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "query",
-            "name": "pairCode",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "baseAsset",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "quoteAsset",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "source",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "status",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "page",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 500
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant crypto rates",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/tenant/v1/trading/rates/crypto/{pairCode}": {
-      "get": {
-        "tags": ["Tenant Trading"],
-        "summary": "Get tenant crypto rate by pair code",
-        "operationId": "getTenantCryptoRateByPairCode",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-tenant-slug",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Optional tenant slug/header when tenant is not resolved from host or domain."
-          },
-          {
-            "in": "path",
-            "name": "pairCode",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant crypto rate",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenericSuccessResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          }
-        }
-      }
-    },
-    "/token": {
-      "post": {
-        "tags": ["Authentication"],
-        "summary": "Generate API access token",
-        "description": "Generate API access token using merchant API key, merchant ID, and optional operation scope.",
-        "operationId": "generateApiAccessToken",
-        "security": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GenerateApiAccessTokenRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Token generated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenerateApiAccessTokenResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TokenBadRequestResponse"
                 }
               }
             }
@@ -8443,18 +7593,6 @@
           }
         }
       },
-      "CreateVirtualAccountRequest": {
-        "type": "object",
-        "required": ["customerId", "currency"],
-        "properties": {
-          "customerId": {
-            "type": "string"
-          },
-          "currency": {
-            "type": "string"
-          }
-        }
-      },
       "TransactionCallbackPayload": {
         "type": "object",
         "properties": {
@@ -9183,13 +8321,6 @@
           }
         }
       },
-      "CryptoRemittanceQuoteResponse": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/GenericSuccessResponse"
-          }
-        ]
-      },
       "DepositAsset": {
         "type": "string",
         "enum": ["BTC", "USDT", "USDC"]
@@ -9197,10 +8328,6 @@
       "DepositNetwork": {
         "type": "string",
         "enum": ["BTC", "TRC20", "BEP20", "SOLANA", "ERC20", "POLYGON"]
-      },
-      "DepositIntentStatus": {
-        "type": "string",
-        "enum": ["ACTIVE", "DISABLED", "RETIRED", "FAILED"]
       },
       "DepositEventStatus": {
         "type": "string",
@@ -9332,13 +8459,6 @@
           }
         }
       },
-      "DepositIntentResponse": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/GenericSuccessResponse"
-          }
-        ]
-      },
       "ApiTokenOperation": {
         "type": "string",
         "description": "Operation permission to bind to the generated token. Defaults to DEBIT.",
@@ -9363,30 +8483,27 @@
       },
       "GenerateApiAccessTokenRequest": {
         "type": "object",
-        "required": ["apikey", "merchantId"],
+        "required": ["merchantId", "apikey"],
         "additionalProperties": false,
         "properties": {
-          "apikey": {
-            "type": "string",
-            "minLength": 32,
-            "maxLength": 64,
-            "pattern": "^[A-Za-z0-9_-]+$",
-            "description": "API key. Must contain only alphanumeric characters, underscores, and hyphens."
-          },
           "merchantId": {
             "type": "string",
-            "minLength": 8,
-            "maxLength": 32,
-            "pattern": "^[A-Za-z0-9-_]{8,32}$",
-            "description": "Merchant ID. Must be 8-32 characters long and contain only alphanumeric characters, hyphens, and underscores."
+            "pattern": "^[a-fA-F0-9]{24}$",
+            "description": "Merchant ObjectId assigned to the partner merchant account."
+          },
+          "apikey": {
+            "type": "string",
+            "minLength": 24,
+            "maxLength": 128,
+            "description": "Merchant API key generated for the merchant API app. This key can be regenerated anytime."
           },
           "operation": {
             "$ref": "#/components/schemas/ApiTokenOperation"
           }
         },
         "example": {
-          "apikey": "sk_test_1234567890abcdefghijklmnopqrstuvwxyz",
-          "merchantId": "merchant_123456",
+          "merchantId": "681111111111111111111111",
+          "apikey": "00000000-0000-4000-8000-000000000000",
           "operation": "DEBIT"
         }
       },
@@ -9406,7 +8523,7 @@
             "properties": {
               "token": {
                 "type": "string",
-                "description": "Bearer JWT access token"
+                "description": "Bearer JWT access token used in Authorization header."
               },
               "expiresIn": {
                 "type": "string",
@@ -9414,6 +8531,14 @@
               },
               "operation": {
                 "$ref": "#/components/schemas/ApiTokenOperation"
+              },
+              "merchantId": {
+                "type": "string",
+                "description": "Authenticated merchant id."
+              },
+              "appId": {
+                "type": "string",
+                "description": "API app id used to generate this token."
               }
             },
             "additionalProperties": true
@@ -9791,32 +8916,6 @@
         "type": "string",
         "enum": ["GHS"],
         "default": "GHS"
-      },
-      "StablecoinMintStatus": {
-        "type": "string",
-        "enum": [
-          "PENDING",
-          "FUNDS_CONFIRMED",
-          "APPROVAL_PENDING",
-          "APPROVED",
-          "MINTED",
-          "REJECTED",
-          "FAILED",
-          "CANCELLED"
-        ]
-      },
-      "StablecoinRedemptionStatus": {
-        "type": "string",
-        "enum": [
-          "PENDING",
-          "APPROVAL_PENDING",
-          "APPROVED",
-          "BURNED",
-          "PAID",
-          "REJECTED",
-          "FAILED",
-          "CANCELLED"
-        ]
       },
       "CreateStablecoinMintRequest": {
         "type": "object",
@@ -10368,102 +9467,6 @@
           }
         }
       },
-      "CreateTenantRampQuoteRequest": {
-        "type": "object",
-        "required": [
-          "direction",
-          "fiatCurrency",
-          "cryptoAsset",
-          "sourceAmount"
-        ],
-        "properties": {
-          "merchantId": {
-            "$ref": "#/components/schemas/ObjectIdString"
-          },
-          "appId": {
-            "$ref": "#/components/schemas/ObjectIdString"
-          },
-          "direction": {
-            "$ref": "#/components/schemas/RampDirection"
-          },
-          "endCustomerId": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 120
-          },
-          "fiatCurrency": {
-            "type": "string",
-            "minLength": 2,
-            "maxLength": 20,
-            "example": "GHS"
-          },
-          "cryptoAsset": {
-            "type": "string",
-            "minLength": 2,
-            "maxLength": 20,
-            "example": "USDT"
-          },
-          "network": {
-            "type": "string",
-            "minLength": 2,
-            "maxLength": 30,
-            "example": "TRC20"
-          },
-          "sourceAmount": {
-            "type": "number",
-            "example": 100,
-            "minimum": 0,
-            "exclusiveMinimum": true
-          },
-          "sourceAssetWalletId": {
-            "$ref": "#/components/schemas/ObjectIdString"
-          },
-          "destinationAssetWalletId": {
-            "$ref": "#/components/schemas/ObjectIdString"
-          },
-          "settlementMode": {
-            "$ref": "#/components/schemas/RampSettlementMode"
-          },
-          "externalCryptoAddress": {
-            "type": "string",
-            "minLength": 8,
-            "maxLength": 200
-          },
-          "destinationTag": {
-            "type": "string",
-            "maxLength": 120
-          },
-          "fiatPaymentMethod": {
-            "type": "string",
-            "maxLength": 40
-          },
-          "fiatProvider": {
-            "type": "string",
-            "maxLength": 40
-          },
-          "paymentReference": {
-            "type": "string",
-            "maxLength": 160
-          },
-          "fiatPayoutDetails": {
-            "type": "object",
-            "additionalProperties": true
-          },
-          "collectionDetails": {
-            "type": "object",
-            "additionalProperties": true
-          },
-          "quoteIdempotencyKey": {
-            "type": "string",
-            "minLength": 3,
-            "maxLength": 200
-          },
-          "metadata": {
-            "type": "object",
-            "additionalProperties": true
-          }
-        }
-      },
       "ExecuteRampQuoteRequest": {
         "type": "object",
         "required": ["quoteRef", "idempotencyKey"],
@@ -10533,59 +9536,210 @@
           }
         }
       },
-      "CompleteTenantRampSettlementRequest": {
+      "MerchantProfileUpdateRequest": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
-          "merchantId": {
-            "$ref": "#/components/schemas/ObjectIdString"
+          "name": {
+            "type": "string"
           },
-          "payoutReference": {
+          "merchant_tradeName": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "email": {
             "type": "string",
-            "maxLength": 160
+            "format": "email"
           },
-          "txHash": {
+          "location": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "registrationNumber": {
+            "type": "string"
+          },
+          "lineOfBusiness": {
+            "type": "string"
+          },
+          "contact_person": {
+            "type": "string"
+          },
+          "contactPersonPhone": {
+            "type": "string"
+          },
+          "contactPersonEmail": {
             "type": "string",
-            "maxLength": 160
+            "format": "email"
           },
-          "metadata": {
-            "type": "object",
-            "additionalProperties": true
+          "contactPersonDesignation": {
+            "type": "string"
+          },
+          "callbackUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "webhookUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "recieveTransactionNotifications": {
+            "type": "boolean"
+          },
+          "recieveBalanceNotifications": {
+            "type": "boolean"
           }
         }
       },
-      "TenantLoginRequest": {
+      "CreateMerchantRoleRequest": {
         "type": "object",
-        "required": ["email", "password"],
+        "required": ["name", "phone", "email", "password"],
+        "additionalProperties": false,
         "properties": {
+          "name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
           "email": {
             "type": "string",
-            "format": "email",
-            "example": "admin@example.com"
+            "format": "email"
           },
           "password": {
             "type": "string",
-            "format": "password",
-            "example": "password"
+            "minLength": 8,
+            "maxLength": 128
+          },
+          "role": {
+            "type": "string",
+            "default": "ADMIN"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
           }
         }
       },
-      "TenantTransactionReportRequest": {
+      "UpdateMerchantRoleRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "blocked": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UpdateMerchantRolePasswordRequest": {
+        "type": "object",
+        "required": ["password"],
+        "additionalProperties": false,
+        "properties": {
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 128
+          }
+        }
+      },
+      "CreateMerchantApiAppRequest": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["test", "live"],
+            "default": "live"
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "generateKey": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "UpdateMerchantApiAppRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["test", "live"]
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "blocked": {
+            "type": "boolean"
+          },
+          "ussdShortCode": {
+            "type": "string"
+          },
+          "ussdEnabled": {
+            "type": "boolean"
+          },
+          "ussdPaymentCallbackUrl": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "MerchantTransactionReportRequest": {
         "type": "object",
         "required": ["startDate", "endDate"],
+        "additionalProperties": false,
         "properties": {
           "startDate": {
             "type": "string",
-            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
-            "example": "2026-06-01"
+            "format": "date-time"
           },
           "endDate": {
             "type": "string",
-            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
-            "example": "2026-06-30"
-          },
-          "merchantId": {
-            "type": "string",
-            "pattern": "^[a-fA-F0-9]{24}$"
+            "format": "date-time"
           },
           "status": {
             "type": "string"
@@ -10602,6 +9756,9 @@
           "recipient_account_issuer": {
             "type": "string"
           },
+          "search": {
+            "type": "string"
+          },
           "page": {
             "type": "integer",
             "minimum": 1,
@@ -10614,7 +9771,27 @@
             "default": 10
           }
         },
-        "description": "Date range cannot exceed 90 days and endDate cannot be before startDate."
+        "description": "Merchant is resolved from the authenticated jwt-admin token; do not send merchantId."
+      },
+      "CreateMerchantRampQuoteRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Create an on-ramp/off-ramp quote for the authenticated merchant. MerchantId is resolved from the token."
+      },
+      "CompleteMerchantRampSettlementRequest": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "settlementReference": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "performedBy": {
+            "type": "string"
+          }
+        }
       }
     }
   }
